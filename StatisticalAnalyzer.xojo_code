@@ -91,6 +91,19 @@ Protected Class StatisticalAnalyzer
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Average(data() As Double) As Double
+		  //Public Function Average(data() As Double) As Double
+		  If data.Count = 0 Then Return 0
+		  Var sum As Double
+		  For Each d As Double In data
+		    sum = sum + d
+		  Next
+		  Return sum / data.Count
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function BlandAltmanAnalysis(method1() As Double, method2() As Double) As Dictionary
 		  // Bland-Altman analysis for method comparison
 		  
@@ -129,6 +142,70 @@ Protected Class StatisticalAnalyzer
 		  result.Value("n") = n
 		  
 		  Return result
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function BootstrapCI(data() As Double, iterations As Integer = 10000) As Dictionary
+		  // Function BootstrapCI(data() As Double, iterations As Integer = 10000) As Dictionary
+		  Var n As Integer = data.Count
+		  If n = 0 Then Return New Dictionary("error": "Empty data")
+		  
+		  Var rng As New Random
+		  Var means() As Double
+		  
+		  For i As Integer = 0 To iterations - 1
+		    Var sample() As Double
+		    For j As Integer = 0 To n - 1
+		      sample.Add(data(rng.InRange(0, n - 1)))
+		    Next
+		    Var sum As Double = 0
+		    For Each v As Double In sample
+		      sum = sum + v
+		    Next
+		    means.Add(sum / n)
+		  Next
+		  
+		  means.Sort
+		  Var lowerIndex As Integer = iterations * 0.025
+		  Var upperIndex As Integer = iterations * 0.975
+		  
+		  Return New Dictionary("lower": means(lowerIndex), "upper": means(upperIndex))
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function BootstrapMedianCI(data() As Double, iterations As Integer = 10000) As Dictionary
+		  // Function BootstrapMedianCI(data() As Double, iterations As Integer = 10000) As Dictionary
+		  Var n As Integer = data.Count
+		  If n = 0 Then Return New Dictionary("error": "Empty data")
+		  
+		  Var rng As New Random
+		  Var medians() As Double
+		  
+		  For i As Integer = 0 To iterations - 1
+		    Var sample() As Double
+		    For j As Integer = 0 To n - 1
+		      sample.Add(data(rng.InRange(0, n - 1)))
+		    Next
+		    
+		    sample.Sort
+		    Var median As Double
+		    If n Mod 2 = 0 Then
+		      median = (sample(n \ 2 - 1) + sample(n \ 2)) / 2
+		    Else
+		      median = sample(n \ 2)
+		    End If
+		    medians.Add(median)
+		  Next
+		  
+		  medians.Sort
+		  Var lowerIndex As Integer = iterations * 0.025
+		  Var upperIndex As Integer = iterations * 0.975
+		  
+		  Return New Dictionary("lower": medians(lowerIndex), "upper": medians(upperIndex))
+		  
 		End Function
 	#tag EndMethod
 
@@ -592,6 +669,123 @@ Protected Class StatisticalAnalyzer
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function CreateDistributionPlot(data() As Double, distType As String = "normal", width As Integer, height As Integer) As Picture
+		  // Public Function CreateDistributionPlot(data() As Double, distType As String = "normal", width As Integer = 600, height As Integer = 400) As Picture
+		  If data.Count = 0 Then Return New Picture(width, height)
+		  
+		  Var sorted() As Double = CloneDoubleArray(data)
+		  sorted.Sort
+		  
+		  Var n As Integer = sorted.Count
+		  Var mean As Double = Average(sorted)
+		  Var sd As Double = StandardDeviation(sorted)
+		  Var sem As Double = sd / Sqrt(n)
+		  Var ciLower As Double = mean - 1.96 * sem
+		  Var ciUpper As Double = mean + 1.96 * sem
+		  
+		  Var minVal As Double = sorted(0)
+		  Var maxVal As Double = sorted(sorted.LastIndex)
+		  Var range As Double = maxVal - minVal
+		  If range = 0 Then range = 1
+		  minVal = minVal - 0.1 * range
+		  maxVal = maxVal + 0.1 * range
+		  range = maxVal - minVal
+		  
+		  Var pic As New Picture(width, height)
+		  Var g As Graphics = pic.Graphics
+		  g.ForeColor = Color.White
+		  g.FillRectangle(0, 0, width, height)
+		  
+		  Var leftMargin As Integer = 60
+		  Var rightMargin As Integer = 20
+		  Var topMargin As Integer = 40
+		  Var bottomMargin As Integer = 40
+		  Var plotWidth As Integer = width - leftMargin - rightMargin
+		  Var plotHeight As Integer = height - topMargin - bottomMargin
+		  
+		  // Distribution line
+		  g.ForeColor = Color.Red
+		  Var points() As Point
+		  Var peakPDF As Double = 0
+		  
+		  For px As Integer = 0 To plotWidth
+		    Var xVal As Double = minVal + (px / plotWidth) * range
+		    Var yVal As Double
+		    
+		    Select Case distType.Lowercase.Trim
+		    Case "poisson"
+		      yVal = PoissonPDF(Floor(xVal), mean)
+		    Case Else
+		      yVal = NormalPDF(xVal, mean, sd)
+		    End Select
+		    
+		    If yVal > peakPDF Then peakPDF = yVal
+		  Next
+		  If peakPDF = 0 Then peakPDF = 1
+		  
+		  For px As Integer = 0 To plotWidth
+		    Var xVal As Double = minVal + (px / plotWidth) * range
+		    Var yVal As Double
+		    
+		    Select Case distType.Lowercase.Trim
+		    Case "poisson"
+		      yVal = PoissonPDF(Floor(xVal), mean)
+		    Case Else
+		      yVal = NormalPDF(xVal, mean, sd)
+		    End Select
+		    
+		    Var normY As Double = yVal / peakPDF
+		    Var py As Double = topMargin + plotHeight - normY * (plotHeight * 0.9)
+		    points.Add(New Point(leftMargin + px, py))
+		  Next
+		  
+		  g.PenWidth = 2
+		  For i As Integer = 1 To points.LastIndex
+		    g.DrawLine(points(i - 1).X, points(i - 1).Y, points(i).X, points(i).Y)
+		  Next
+		  
+		  
+		  
+		  // CI lines
+		  g.ForeColor = Color.RGB(0, 100, 0)
+		  g.PenWidth = 1
+		  Var ciLx As Double = leftMargin + ((ciLower - minVal) / range) * plotWidth
+		  Var ciUx As Double = leftMargin + ((ciUpper - minVal) / range) * plotWidth
+		  g.DrawLine(ciLx, topMargin, ciLx, topMargin + plotHeight)
+		  g.DrawLine(ciUx, topMargin, ciUx, topMargin + plotHeight)
+		  
+		  // Axes
+		  g.ForeColor = Color.Black
+		  g.DrawLine(leftMargin, topMargin + plotHeight, leftMargin + plotWidth, topMargin + plotHeight)
+		  g.DrawLine(leftMargin, topMargin, leftMargin, topMargin + plotHeight)
+		  
+		  // X-axis ticks
+		  Var tickCount As Integer = 10
+		  g.TextSize = 10
+		  For i As Integer = 0 To tickCount
+		    Var frac As Double = i / tickCount
+		    Var xVal As Double = minVal + frac * range
+		    Var xPix As Integer = leftMargin + frac * plotWidth
+		    g.DrawLine(xPix, topMargin + plotHeight, xPix, topMargin + plotHeight + 5)
+		    g.DrawText(Format(xVal, "0.0"), xPix - 10, topMargin + plotHeight + 20)
+		  Next
+		  
+		  // Labels: stats display
+		  g.TextSize = 10
+		  Var labelY As Integer = topMargin + 20
+		  g.DrawText("Mean: " + Format(mean, "0.00"), leftMargin + 10, labelY)
+		  labelY = labelY + 15
+		  g.DrawText("Std Dev: " + Format(sd, "0.00"), leftMargin + 10, labelY)
+		  labelY = labelY + 15
+		  g.DrawText("SEM: " + Format(sem, "0.000"), leftMargin + 10, labelY)
+		  labelY = labelY + 15
+		  g.DrawText("95% CI: [" + Format(ciLower, "0.00") + ", " + Format(ciUpper, "0.00") + "]", leftMargin + 10, labelY)
+		  Return pic
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function CreateDualBoxPlot(data1() As Double, data2() As Double, title As String, label1 As String, label2 As String, width As Integer, height As Integer) As Picture
 		  //Function CreateDualBoxPlot(data1() As Double, data2() As Double, title As String, label1 As String, label2 As String, width As Integer, height As Integer) As Picture
 		  
@@ -1012,8 +1206,17 @@ Protected Class StatisticalAnalyzer
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function CreateScatterPlot(xData() As Double, yData() As Double, title As String = "Scatter Plot", showRegression As Boolean = True, width As Integer = 600, height As Integer = 500) As Picture
-		  // Create scatter plot with optional regression line
+		Function CreateScatterPlot(xData() as Double, yData() as Double, width as Integer, height as Integer, showRegression as Boolean = True, title as String, xLabel as String, yLabel as String) As Picture
+		  'Public Function CreateScatterPlot( _
+		  'xData()        As Double,  _
+		  'yData()        As Double,  _
+		  'width          As Integer, _
+		  'height         As Integer, _
+		  'showRegression As Boolean, _
+		  'title          As String,  _
+		  'xLabel         As String,  _
+		  'yLabel         As String  _
+		  ') As Picture
 		  
 		  If xData.Count <> yData.Count Then
 		    Return CreateErrorPlot("X and Y data must have the same length", width, height)
@@ -1022,116 +1225,157 @@ Protected Class StatisticalAnalyzer
 		  Var pic As New Picture(width, height, 32)
 		  Var g As Graphics = pic.Graphics
 		  
-		  // Calculate regression if requested
 		  Var regression As Dictionary
 		  If showRegression Then
 		    regression = LinearRegression(xData, yData)
 		  End If
 		  
-		  // Set up coordinate system
-		  Var margins As Integer = 60
-		  Var plotWidth As Integer = width - 2 * margins
-		  Var plotHeight As Integer = height - 2 * margins
+		  Var margin As Integer = 60
+		  Var plotWidth As Integer = width - 2 * margin
+		  Var plotHeight As Integer = height - 2 * margin
 		  
-		  // Find data ranges
 		  Var minX As Double = xData(0)
 		  Var maxX As Double = xData(0)
 		  Var minY As Double = yData(0)
 		  Var maxY As Double = yData(0)
 		  
-		  For i As Integer = 0 To xData.Count - 1
+		  For i As Integer = 0 To xData.LastIndex
 		    minX = Min(minX, xData(i))
 		    maxX = Max(maxX, xData(i))
 		    minY = Min(minY, yData(i))
 		    maxY = Max(maxY, yData(i))
 		  Next
 		  
-		  // Add padding
 		  Var rangeX As Double = maxX - minX
 		  Var rangeY As Double = maxY - minY
+		  If rangeX = 0 Then rangeX = 1.0
+		  If rangeY = 0 Then rangeY = 1.0
 		  minX = minX - 0.1 * rangeX
 		  maxX = maxX + 0.1 * rangeX
 		  minY = minY - 0.1 * rangeY
 		  maxY = maxY + 0.1 * rangeY
 		  
-		  // Clear background
-		  g.ForeColor = Color.White
+		  g.ForeColor = &cFFFFFF
 		  g.FillRectangle(0, 0, width, height)
 		  
-		  // Draw plot area
-		  g.ForeColor = Color.Black
-		  g.DrawRectangle(margins, margins, plotWidth, plotHeight)
+		  g.ForeColor = &c000000
+		  g.DrawRectangle(margin, margin, plotWidth, plotHeight)
 		  
-		  // Draw grid
-		  g.ForeColor = Color.RGB(220, 220, 220)
-		  For i As Integer = 1 To 9
-		    Var x As Integer = margins + i * plotWidth / 10
-		    Var y As Integer = margins + i * plotHeight / 10
-		    g.DrawLine(x, margins, x, margins + plotHeight)
-		    g.DrawLine(margins, y, margins + plotWidth, y)
+		  ' Draw X and Y axis ticks
+		  g.TextFont = "Arial"
+		  g.TextSize = 10
+		  g.ForeColor = &c000000
+		  
+		  Const numTicks As Integer = 5
+		  
+		  ' X axis ticks
+		  For i As Integer = 0 To numTicks
+		    Var normX As Double = i / numTicks
+		    Var x As Integer = margin + normX * plotWidth
+		    Var xVal As Double = minX + normX * (maxX - minX)
+		    g.DrawLine(x, margin + plotHeight, x, margin + plotHeight + 5)
+		    Var label As String = Format(xVal, "0.###")
+		    g.DrawText(label, x - g.TextWidth(label) / 2, margin + plotHeight + 20)
 		  Next
 		  
-		  // Draw regression line if requested
+		  ' Y axis ticks
+		  For i As Integer = 0 To numTicks
+		    Var normY As Double = i / numTicks
+		    Var y As Integer = margin + plotHeight - normY * plotHeight
+		    Var yVal As Double = minY + normY * (maxY - minY)
+		    g.DrawLine(margin - 5, y, margin, y)
+		    Var label As String = Format(yVal, "0.###")
+		    g.DrawText(label, margin - g.TextWidth(label) - 8, y + 4)
+		  Next
+		  
+		  ' Grid
+		  g.ForeColor = Color.RGB(220, 220, 220)
+		  For i As Integer = 1 To 9
+		    Var gx As Integer = margin + i * plotWidth / 10
+		    Var gy As Integer = margin + i * plotHeight / 10
+		    g.DrawLine(gx, margin, gx, margin + plotHeight)
+		    g.DrawLine(margin, gy, margin + plotWidth, gy)
+		  Next
+		  
+		  ' Regression line
 		  If showRegression And Not regression.HasKey("error") Then
-		    g.ForeColor = Color.Red
+		    g.ForeColor = &cFF0000
 		    g.PenWidth = 2
 		    
 		    Var slope As Double = regression.Value("slope")
 		    Var intercept As Double = regression.Value("intercept")
 		    
-		    Var x1 As Integer = margins
 		    Var y1Val As Double = slope * minX + intercept
-		    Var y1 As Integer = margins + plotHeight - ((y1Val - minY) / (maxY - minY)) * plotHeight
-		    
-		    Var x2 As Integer = margins + plotWidth
 		    Var y2Val As Double = slope * maxX + intercept
-		    Var y2 As Integer = margins + plotHeight - ((y2Val - minY) / (maxY - minY)) * plotHeight
+		    
+		    Var x1 As Integer = margin
+		    Var x2 As Integer = margin + plotWidth
+		    Var y1 As Integer = margin + plotHeight - ((y1Val - minY) / (maxY - minY)) * plotHeight
+		    Var y2 As Integer = margin + plotHeight - ((y2Val - minY) / (maxY - minY)) * plotHeight
 		    
 		    g.DrawLine(x1, y1, x2, y2)
 		  End If
 		  
-		  // Draw data points
-		  g.ForeColor = Color.Blue
+		  ' Data points
+		  g.ForeColor = &c0000FF
 		  g.PenWidth = 1
 		  
-		  For i As Integer = 0 To xData.Count - 1
-		    Var x As Integer = margins + ((xData(i) - minX) / (maxX - minX)) * plotWidth
-		    Var y As Integer = margins + plotHeight - ((yData(i) - minY) / (maxY - minY)) * plotHeight
-		    g.FillOval(x - 3, y - 3, 6, 6)
+		  For i As Integer = 0 To xData.LastIndex
+		    Var px As Integer = margin + ((xData(i) - minX) / (maxX - minX)) * plotWidth
+		    Var py As Integer = margin + plotHeight - ((yData(i) - minY) / (maxY - minY)) * plotHeight
+		    g.FillOval(px - 3, py - 3, 6, 6)
 		  Next
 		  
-		  // Add title and labels
-		  g.ForeColor = Color.Black
+		  ' Titles
 		  g.TextFont = "Arial"
 		  g.TextSize = 14
-		  
 		  Var titleWidth As Integer = g.TextWidth(title)
-		  g.DrawText(title, (width - titleWidth) / 2, 25)
+		  g.ForeColor = &c000000
+		  g.DrawText(title, (width - titleWidth) / 2, 20)
 		  
+		  ' Regression equation
+		  If showRegression And Not regression.HasKey("error") Then
+		    g.TextSize = 12
+		    Var slope As Double = regression.Value("slope")
+		    Var intercept As Double = regression.Value("intercept")
+		    Var equation As String = "y = " + Format(slope, "0.000") + "x + " + Format(intercept, "0.000")
+		    Var eqWidth As Integer = g.TextWidth(equation)
+		    g.DrawText(equation, (width - eqWidth) / 2, 40)
+		  End If
+		  
+		  ' X label
 		  g.TextSize = 10
-		  g.DrawText("X Variable", (width - g.TextWidth("X Variable")) / 2, height - 10)
-		  g.DrawText("Y Variable", 10, (height + g.TextWidth("Y Variable")) / 2)
+		  g.DrawText(xLabel, (width - g.TextWidth(xLabel)) / 2, height - 10)
 		  
-		  // Add regression statistics if available
+		  ' Draw vertical Y-axis label (character by character, rotated manually)
+		  Var labelX As Integer = margin - 40
+		  Var labelY As Integer = margin + plotHeight / 2 - (yLabel.Length * g.TextHeight / 2)
+		  
+		  For i As Integer = 0 To yLabel.Length - 1
+		    Var ch As String = yLabel.Mid(i + 1, 1)
+		    g.DrawText(ch, labelX, labelY + i * g.TextHeight)
+		  Next
+		  
+		  ' Regression stats block
 		  If showRegression And Not regression.HasKey("error") Then
 		    g.TextSize = 10
 		    Var r As Double = regression.Value("correlation")
 		    Var r2 As Double = r * r
+		    Var pVal As Double = regression.Value("p_value")
 		    Var statsText As String = "R² = " + Format(r2, "0.000") + EndOfLine + _
-		    "r = " + Format(r, "0.000") + EndOfLine + _
-		    "p = " + Format(regression.Value("p_value"), "0.000")
-		    
-		    g.DrawText(statsText, margins + 10, margins + 20)
+		    "r  = " + Format(r, "0.000") + EndOfLine + _
+		    "p  = " + Format(pVal, "0.000")
+		    g.DrawText(statsText, margin + 10, margin + 20)
 		  End If
 		  
 		  Return pic
+		  
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function DescriptiveStatistics(data() As Double) As Dictionary
-		  // Calculate comprehensive descriptive statistics
-		  
+		  // Function DescriptiveStatistics(data() As Double) As Dictionary
 		  Var result As New Dictionary
 		  Var n As Integer = data.Count
 		  
@@ -1140,16 +1384,13 @@ Protected Class StatisticalAnalyzer
 		    Return result
 		  End If
 		  
-		  // Sort data for percentile calculations
+		  ' Sort data
 		  Var sortedData() As Double = CloneDoubleArray(data)
 		  sortedData.Sort
 		  
-		  // Basic statistics
+		  ' Basic stats
 		  Var sum As Double = 0
 		  Var sumSquares As Double = 0
-		  Var minVal As Double = sortedData(0)
-		  Var maxVal As Double = sortedData(n - 1)
-		  
 		  For Each value As Double In data
 		    sum = sum + value
 		    sumSquares = sumSquares + value * value
@@ -1159,52 +1400,78 @@ Protected Class StatisticalAnalyzer
 		  Var variance As Double = (sumSquares - n * mean * mean) / (n - 1)
 		  Var stdDev As Double = Sqrt(variance)
 		  
-		  // Median
+		  ' Median
 		  Var median As Double
 		  If n Mod 2 = 0 Then
-		    median = (sortedData(n / 2 - 1) + sortedData(n / 2)) / 2
+		    median = (sortedData(n \ 2 - 1) + sortedData(n \ 2)) / 2
 		  Else
-		    median = sortedData(n / 2)
+		    median = sortedData(n \ 2)
 		  End If
 		  
-		  // Quartiles
+		  ' Quartiles
 		  Var q1 As Double = Quartile(sortedData, 1)
 		  Var q3 As Double = Quartile(sortedData, 3)
 		  Var iqr As Double = q3 - q1
 		  
-		  // Skewness and Kurtosis
+		  ' Skewness and Kurtosis
 		  Var skewness As Double = 0
 		  Var kurtosis As Double = 0
-		  
 		  For Each value As Double In data
 		    Var deviation As Double = value - mean
 		    skewness = skewness + (deviation / stdDev) ^ 3
 		    kurtosis = kurtosis + (deviation / stdDev) ^ 4
 		  Next
-		  
 		  skewness = skewness / n
-		  kurtosis = (kurtosis / n) - 3 // Excess kurtosis
+		  kurtosis = (kurtosis / n) - 3 ' Excess kurtosis
 		  
-		  // Standard Error
-		  Var standardError As Double = stdDev / Sqrt(n)
+		  ' SEM and t-based CI
+		  Var sem As Double = stdDev / Sqrt(n)
+		  Var tVal As Double = TValue95(n)
+		  Var ciLower As Double = mean - tVal * sem
+		  Var ciUpper As Double = mean + tVal * sem
+		  Var ciWidth As Double = ciUpper - ciLower
 		  
-		  // Populate result dictionary
+		  ' Bootstrap CIs
+		  Var bootMeanCI As Dictionary = BootstrapCI(data)
+		  Var bootMedCI As Dictionary = BootstrapMedianCI(data)
+		  
+		  ' Populate result dictionary
 		  result.Value("n") = n
 		  result.Value("mean") = mean
 		  result.Value("median") = median
 		  result.Value("std_dev") = stdDev
 		  result.Value("variance") = variance
-		  result.Value("min") = minVal
-		  result.Value("max") = maxVal
-		  result.Value("range") = maxVal - minVal
+		  result.Value("min") = sortedData(0)
+		  result.Value("max") = sortedData(n - 1)
+		  result.Value("range") = sortedData(n - 1) - sortedData(0)
 		  result.Value("q1") = q1
 		  result.Value("q3") = q3
 		  result.Value("iqr") = iqr
 		  result.Value("skewness") = skewness
 		  result.Value("kurtosis") = kurtosis
-		  result.Value("standard_error") = standardError
+		  result.Value("sem") = sem
+		  result.Value("ci_95_lower") = ciLower
+		  result.Value("ci_95_upper") = ciUpper
+		  result.Value("ci_95_width") = ciWidth
+		  
+		  If Not bootMeanCI.HasKey("error") Then
+		    Var lower As Double = bootMeanCI.Value("lower")
+		    Var upper As Double = bootMeanCI.Value("upper")
+		    result.Value("bootstrap_mean_ci_lower") = lower
+		    result.Value("bootstrap_mean_ci_upper") = upper
+		    result.Value("bootstrap_mean_ci_width") = upper - lower
+		  End If
+		  
+		  If Not bootMedCI.HasKey("error") Then
+		    Var lower As Double = bootMedCI.Value("lower")
+		    Var upper As Double = bootMedCI.Value("upper")
+		    result.Value("bootstrap_median_ci_lower") = lower
+		    result.Value("bootstrap_median_ci_upper") = upper
+		    result.Value("bootstrap_median_ci_width") = upper - lower
+		  End If
 		  
 		  Return result
+		  
 		End Function
 	#tag EndMethod
 
@@ -1295,6 +1562,19 @@ Protected Class StatisticalAnalyzer
 		  
 		  
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Factorial(n As Integer) As Double
+		  // Public Function Factorial(n As Integer) As Double
+		  If n < 0 Then Return 1
+		  Var result As Double = 1
+		  For i As Integer = 2 To n
+		    result = result * i
+		  Next
+		  Return result
+		  
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -1458,6 +1738,17 @@ Protected Class StatisticalAnalyzer
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function NormalPDF(x As Double, mean As Double, stddev As Double) As Double
+		  // Public Function NormalPDF(x As Double, mean As Double, stddev As Double) As Double
+		  If stddev = 0 Then Return 0
+		  Var coeff As Double = 1 / (stddev * Sqrt(2 * Pi))
+		  Var exponent As Double = -((x - mean)^2) / (2 * stddev^2)
+		  Return coeff * Exp(exponent)
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function OneSampleTTest(data() As Double, mu0 As Double, alpha As Double = 0.05) As Dictionary
 		  // One-sample t-test
 		  
@@ -1552,6 +1843,15 @@ Protected Class StatisticalAnalyzer
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function PoissonPDF(k As Integer, lambda As Double) As Double
+		  // Public Function PoissonPDF(k As Integer, lambda As Double) As Double
+		  If k < 0 Or lambda <= 0 Then Return 0
+		  Return (Exp(-lambda) * lambda^k) / Factorial(k)
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Quartile(sortedData() As Double, q As Integer) As Double
 		  // Calculate quartile (q = 1, 2, or 3)
 		  
@@ -1580,6 +1880,19 @@ Protected Class StatisticalAnalyzer
 		    Var fraction As Double = pos - Floor(pos)
 		    Return sortedData(lower) + fraction * (sortedData(upper) - sortedData(lower))
 		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function StandardDeviation(data() As Double) As Double
+		  // Public Function StandardDeviation(data() As Double) As Double
+		  Var avg As Double = Average(data)
+		  Var sumSquares As Double
+		  For Each d As Double In data
+		    sumSquares = sumSquares + (d - avg) ^ 2
+		  Next
+		  Return Sqrt(sumSquares / (data.Count - 1))
+		  
 		End Function
 	#tag EndMethod
 
@@ -1645,6 +1958,24 @@ Protected Class StatisticalAnalyzer
 		  Var correction As Double = z * z * z / (4 * df)
 		  
 		  Return z + correction
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function TValue95(n As Integer) As Double
+		  //Function TValue95(n As Integer) As Double
+		  If n <= 1 Then Return 0
+		  
+		  Select Case n
+		  Case 2 To 30
+		    Var tValues() As Double = Array(12.706, 4.303, 3.182, 2.776, 2.571, 2.447, 2.365, 2.306, 2.262, 2.228, _
+		    2.201, 2.179, 2.160, 2.145, 2.131, 2.120, 2.110, 2.101, 2.093, 2.086, _
+		    2.080, 2.074, 2.069, 2.064, 2.060, 2.056, 2.052, 2.048, 2.045)
+		    Return tValues(n - 2)
+		  Else
+		    Return 1.96
+		  End Select
+		  
 		End Function
 	#tag EndMethod
 

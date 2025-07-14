@@ -1,5 +1,5 @@
 #tag DesktopWindow
-Begin DesktopWindow Window1
+Begin DesktopWindow StatsWindow
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF
    Composite       =   False
@@ -26,6 +26,7 @@ Begin DesktopWindow Window1
    Visible         =   True
    Width           =   816
    Begin DesktopBevelButton BoxPlotBevelButton
+      Active          =   False
       AllowAutoDeactivate=   True
       AllowFocus      =   True
       AllowTabStop    =   True
@@ -50,26 +51,32 @@ Begin DesktopWindow Window1
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
-      Left            =   67
+      Left            =   66
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
       MenuStyle       =   0
+      PanelIndex      =   0
       Scope           =   0
       TabIndex        =   0
       TabPanelIndex   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   54
+      Top             =   224
       Transparent     =   False
       Underline       =   False
       Value           =   False
       Visible         =   True
       Width           =   101
+      _mIndex         =   0
+      _mInitialParent =   ""
+      _mName          =   ""
+      _mPanelIndex    =   0
    End
    Begin DesktopBevelButton TwoBoxplotsBevelButton
+      Active          =   False
       AllowAutoDeactivate=   True
       AllowFocus      =   True
       AllowTabStop    =   True
@@ -94,26 +101,32 @@ Begin DesktopWindow Window1
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
-      Left            =   8
+      Left            =   7
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
       MenuStyle       =   0
+      PanelIndex      =   0
       Scope           =   0
       TabIndex        =   1
       TabPanelIndex   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   88
+      Top             =   258
       Transparent     =   False
       Underline       =   False
       Value           =   False
       Visible         =   True
       Width           =   160
+      _mIndex         =   0
+      _mInitialParent =   ""
+      _mName          =   ""
+      _mPanelIndex    =   0
    End
    Begin DesktopBevelButton BA_BevelButton
+      Active          =   False
       AllowAutoDeactivate=   True
       AllowFocus      =   True
       AllowTabStop    =   True
@@ -138,26 +151,32 @@ Begin DesktopWindow Window1
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
-      Left            =   67
+      Left            =   65
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
       MenuStyle       =   0
+      PanelIndex      =   0
       Scope           =   0
       TabIndex        =   2
       TabPanelIndex   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   163
+      Top             =   292
       Transparent     =   False
       Underline       =   False
       Value           =   False
       Visible         =   True
       Width           =   101
+      _mIndex         =   0
+      _mInitialParent =   ""
+      _mName          =   ""
+      _mPanelIndex    =   0
    End
    Begin DesktopBevelButton QQBevelButton
+      Active          =   False
       AllowAutoDeactivate=   True
       AllowFocus      =   True
       AllowTabStop    =   True
@@ -182,26 +201,32 @@ Begin DesktopWindow Window1
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
-      Left            =   67
+      Left            =   66
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
       MenuStyle       =   0
+      PanelIndex      =   0
       Scope           =   0
       TabIndex        =   3
       TabPanelIndex   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   440
+      Top             =   122
       Transparent     =   False
       Underline       =   False
       Value           =   False
       Visible         =   True
       Width           =   101
+      _mIndex         =   0
+      _mInitialParent =   ""
+      _mName          =   ""
+      _mPanelIndex    =   0
    End
-   Begin DesktopBevelButton BevelButton13
+   Begin DesktopBevelButton DistributionBevelButton
+      Active          =   False
       AllowAutoDeactivate=   True
       AllowFocus      =   True
       AllowTabStop    =   True
@@ -209,7 +234,7 @@ Begin DesktopWindow Window1
       BevelStyle      =   0
       Bold            =   False
       ButtonStyle     =   0
-      Caption         =   "Untitled"
+      Caption         =   "Plot distribution"
       CaptionAlignment=   3
       CaptionDelta    =   0
       CaptionPosition =   1
@@ -226,26 +251,32 @@ Begin DesktopWindow Window1
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
-      Left            =   67
+      Left            =   66
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
       MenuStyle       =   0
+      PanelIndex      =   0
       Scope           =   0
       TabIndex        =   4
       TabPanelIndex   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   545
+      Top             =   88
       Transparent     =   False
       Underline       =   False
       Value           =   False
       Visible         =   True
       Width           =   101
+      _mIndex         =   0
+      _mInitialParent =   ""
+      _mName          =   ""
+      _mPanelIndex    =   0
    End
-   Begin DesktopBevelButton BevelButton12
+   Begin DesktopBevelButton StatsBevelButton
+      Active          =   False
       AllowAutoDeactivate=   True
       AllowFocus      =   True
       AllowTabStop    =   True
@@ -253,7 +284,7 @@ Begin DesktopWindow Window1
       BevelStyle      =   0
       Bold            =   False
       ButtonStyle     =   0
-      Caption         =   "Untitled"
+      Caption         =   "Statistics Summary"
       CaptionAlignment=   3
       CaptionDelta    =   0
       CaptionPosition =   1
@@ -270,26 +301,32 @@ Begin DesktopWindow Window1
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
-      Left            =   67
+      Left            =   43
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
       MenuStyle       =   0
+      PanelIndex      =   0
       Scope           =   0
       TabIndex        =   5
       TabPanelIndex   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   475
+      Top             =   54
       Transparent     =   False
       Underline       =   False
       Value           =   False
       Visible         =   True
-      Width           =   101
+      Width           =   124
+      _mIndex         =   0
+      _mInitialParent =   ""
+      _mName          =   ""
+      _mPanelIndex    =   0
    End
-   Begin DesktopBevelButton BevelButton11
+   Begin DesktopBevelButton ScatterPlotBevelButton1
+      Active          =   False
       AllowAutoDeactivate=   True
       AllowFocus      =   True
       AllowTabStop    =   True
@@ -297,7 +334,7 @@ Begin DesktopWindow Window1
       BevelStyle      =   0
       Bold            =   False
       ButtonStyle     =   0
-      Caption         =   "Untitled"
+      Caption         =   "Scatter Plot"
       CaptionAlignment=   3
       CaptionDelta    =   0
       CaptionPosition =   1
@@ -314,26 +351,32 @@ Begin DesktopWindow Window1
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
-      Left            =   67
+      Left            =   66
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
       MenuStyle       =   0
+      PanelIndex      =   0
       Scope           =   0
       TabIndex        =   6
       TabPanelIndex   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   510
+      Top             =   156
       Transparent     =   False
       Underline       =   False
       Value           =   False
       Visible         =   True
       Width           =   101
+      _mIndex         =   0
+      _mInitialParent =   ""
+      _mName          =   ""
+      _mPanelIndex    =   0
    End
    Begin DesktopBevelButton HistogramBevelButton
+      Active          =   False
       AllowAutoDeactivate=   True
       AllowFocus      =   True
       AllowTabStop    =   True
@@ -358,26 +401,32 @@ Begin DesktopWindow Window1
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
-      Left            =   67
+      Left            =   66
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
       MenuStyle       =   0
+      PanelIndex      =   0
       Scope           =   0
       TabIndex        =   7
       TabPanelIndex   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   122
+      Top             =   190
       Transparent     =   False
       Underline       =   False
       Value           =   False
       Visible         =   True
       Width           =   101
+      _mIndex         =   0
+      _mInitialParent =   ""
+      _mName          =   ""
+      _mPanelIndex    =   0
    End
    Begin DesktopImageViewer ImageViewer1
+      Active          =   False
       AllowAutoDeactivate=   True
       AllowTabStop    =   True
       Enabled         =   True
@@ -386,11 +435,12 @@ Begin DesktopWindow Window1
       Index           =   -2147483648
       InitialParent   =   ""
       Left            =   179
-      LockBottom      =   False
+      LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
-      LockRight       =   False
+      LockRight       =   True
       LockTop         =   True
+      PanelIndex      =   0
       Scope           =   0
       TabIndex        =   8
       TabPanelIndex   =   0
@@ -399,6 +449,10 @@ Begin DesktopWindow Window1
       Transparent     =   False
       Visible         =   True
       Width           =   617
+      _mIndex         =   0
+      _mInitialParent =   ""
+      _mName          =   ""
+      _mPanelIndex    =   0
    End
 End
 #tag EndDesktopWindow
@@ -513,6 +567,51 @@ End
 		  Var QQPlot As Picture = analyzer.CreateQQPlot(data2, "QQ Plot for Normality ", width,height)
 		  ImageViewer1.Image = QQPlot
 		  
+		  
+		  
+		  
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events DistributionBevelButton
+	#tag Event
+		Sub Pressed()
+		  Var analyzer As New StatisticalAnalyzer
+		  Var data() As Double = Array(1.2, 2.3, 1.8, 2.1, 1.9, 2.4, 1.7, 2.2)
+		  
+		  
+		  Var distributionPlot As Picture = analyzer.CreateDistributionPlot(data, "normal",width,height)
+		  ImageViewer1.image = distributionPlot
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events StatsBevelButton
+	#tag Event
+		Sub Pressed()
+		  
+		  Var analyzer As New StatisticalAnalyzer
+		  Var data1() As Double = Array(1.2, 2.3, 1.8, 2.1, 1.9, 2.4, 1.7, 2.2)
+		  Var data2() As Double = Array(1.4, 1.3, 1.9, 3.1, 1.5, 2.0, 1.0, 2.20)
+		  
+		  
+		  
+		  Var statsDict As Dictionary = analyzer.DescriptiveStatistics(data1)
+		  dictViewerWindow.ShowDictionary(statsDict, "Summary Statistics")
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events ScatterPlotBevelButton1
+	#tag Event
+		Sub Pressed()
+		  Var analyzer As New StatisticalAnalyzer
+		  Var data1() As Double = Array(1.2, 2.3, 1.8, 2.1, 1.9, 2.4, 1.7, 2.2)
+		  Var data2() As Double = Array(1.4, 1.3, 1.9, 3.1, 1.5, 2.0, 1.0, 2.20)
+		  
+		  
+		  //xData() As Double, yData() As Double, width As Integer, height As Integer, showRegression As Boolean = True, title as String, xLabel as String, yLabel as String
+		  
+		  Var scatterplot As Picture = analyzer.CreateScatterPlot(data1, data2,width,height,TRUE,"Scatter Plot ", "data1","data2") 
+		  ImageViewer1.Image = scatterplot
 		  
 		  
 		  
