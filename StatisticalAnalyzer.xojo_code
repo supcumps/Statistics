@@ -58,6 +58,39 @@ Protected Class StatisticalAnalyzer
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function AssessHeteroscedasticity(xVals() As Double, yVals() As Double, slope As Double, intercept As Double, se As Double) As String
+		  //Function AssessHeteroscedasticity(xVals() As Double, yVals() As Double, slope As Double, intercept As Double, se As Double) As String
+		  Var n As Integer = xVals.Count
+		  Var firstHalf() As Double
+		  Var secondHalf() As Double
+		  
+		  // Split residuals into two halves
+		  For i As Integer = 0 To n - 1
+		    Var predicted As Double = intercept + slope * xVals(i)
+		    Var residual As Double = Abs(yVals(i) - predicted)
+		    
+		    If i < n / 2 Then
+		      firstHalf.Add(residual)
+		    Else
+		      secondHalf.Add(residual)
+		    End If
+		  Next
+		  
+		  // Calculate variance of each half
+		  Var var1 As Double = CalculateVariance(firstHalf)
+		  Var var2 As Double = CalculateVariance(secondHalf)
+		  Var ratio As Double = Max(var1, var2) / Min(var1, var2)
+		  
+		  If ratio > 2.0 Then
+		    Return "HETEROSCEDASTIC: Unequal variances detected (ratio=" + Format(ratio, "0.1") + ")"
+		  Else
+		    Return "HOMOSCEDASTIC: Equal variances assumed (ratio=" + Format(ratio, "0.1") + ")"
+		  End If
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function BlandAltmanAnalysis(method1() As Double, method2() As Double) As Dictionary
 		  // Bland-Altman analysis for method comparison
 		  
@@ -96,6 +129,56 @@ Protected Class StatisticalAnalyzer
 		  result.Value("n") = n
 		  
 		  Return result
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function CalculateRSquared(xVals() As Double, yVals() As Double, slope As Double, intercept As Double) As double
+		  //Function CalculateRSquared(xVals() As Double, yVals() As Double, slope As Double, intercept As Double) As Double
+		  Var n As Integer = xVals.Count
+		  Var sumY As Double = 0
+		  Var sumSquaredResiduals As Double = 0
+		  Var sumSquaredTotal As Double = 0
+		  
+		  For i As Integer = 0 To n - 1
+		    sumY = sumY + yVals(i)
+		  Next
+		  Var meanY As Double = sumY / n
+		  
+		  For i As Integer = 0 To n - 1
+		    Var predicted As Double = intercept + slope * xVals(i)
+		    Var residual As Double = yVals(i) - predicted
+		    sumSquaredResiduals = sumSquaredResiduals + residual^2
+		    
+		    Var totalDeviation As Double = yVals(i) - meanY
+		    sumSquaredTotal = sumSquaredTotal + totalDeviation^2
+		  Next
+		  
+		  Return 1 - (sumSquaredResiduals / sumSquaredTotal)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function CalculateVariance(values() As Double) As Double
+		  // Function CalculateVariance(values() As Double) As Double
+		  Var n As Integer = values.Count
+		  If n <= 1 Then Return 0
+		  
+		  Var sum As Double = 0
+		  For Each Val As Double In values
+		    sum = sum + Val
+		  Next
+		  Var mean As Double = sum / n
+		  
+		  Var sumSquares As Double = 0
+		  For Each Val As Double In values
+		    sumSquares = sumSquares + (Val - mean)^2
+		  Next
+		  
+		  Return sumSquares / (n - 1)
+		  
+		  
+		  
 		End Function
 	#tag EndMethod
 
@@ -165,7 +248,7 @@ Protected Class StatisticalAnalyzer
 		  g.DrawLine(margins, margins, margins, height - margins)  // Y-axis
 		  g.DrawLine(margins, height - margins, width - margins, height - margins)  // X-axis
 		  
-		  // Add Y-axis labels and tick marks
+		  // Add   labels and tick marks
 		  g.FontName = "Arial"
 		  g.FontSize = 12
 		  Var numYTicks As Integer = 8
@@ -614,7 +697,8 @@ Protected Class StatisticalAnalyzer
 
 	#tag Method, Flags = &h0
 		Function CreateErrorPlot(errorMessage As String, width As Integer, height As Integer) As Picture
-		  // Create error plot
+		  
+		  // CreateErrorPlot(errorMessage As String, width As Integer, height As Integer) As Picture
 		  
 		  Var pic As New Picture(width, height, 32)
 		  Var g As Graphics = pic.Graphics
@@ -635,8 +719,6 @@ Protected Class StatisticalAnalyzer
 
 	#tag Method, Flags = &h0
 		Function CreateHistogram(data() As Double, title As String = "Histogram", bins As Integer = 0, width As Integer = 600, height As Integer = 400) As Picture
-		  // Create histogram with optional normal distribution overlay
-		  
 		  Var pic As New Picture(width, height, 32)
 		  Var g As Graphics = pic.Graphics
 		  
@@ -678,65 +760,102 @@ Protected Class StatisticalAnalyzer
 		  Var margins As Integer = 60
 		  Var plotWidth As Integer = width - 2 * margins
 		  Var plotHeight As Integer = height - 2 * margins
+		  Var originX As Integer = margins
+		  Var originY As Integer = height - margins
 		  
 		  // Clear background
-		  g.ForeColor = Color.White
+		  g.DrawingColor = Color.White
 		  g.FillRectangle(0, 0, width, height)
 		  
-		  // Draw plot area
-		  g.ForeColor = Color.Black
-		  g.DrawRectangle(margins, margins, plotWidth, plotHeight)
+		  // Draw plot border
+		  g.DrawingColor = Color.Black
+		  g.DrawRectangle(originX, margins, plotWidth, plotHeight)
 		  
 		  // Draw histogram bars
-		  g.ForeColor = Color.RGB(200, 200, 255)
 		  Var barWidth As Double = plotWidth / bins
+		  g.DrawingColor = Color.RGB(200, 200, 255)
 		  
 		  For i As Integer = 0 To bins - 1
 		    Var barHeight As Integer = (binCounts(i) / maxCount) * plotHeight
-		    Var x As Integer = margins + i * barWidth
-		    Var y As Integer = margins + plotHeight - barHeight
+		    Var x As Integer = originX + i * barWidth
+		    Var y As Integer = originY - barHeight
 		    
 		    g.FillRectangle(x, y, barWidth - 1, barHeight)
-		    g.ForeColor = Color.Black
+		    g.DrawingColor = Color.Black
 		    g.DrawRectangle(x, y, barWidth - 1, barHeight)
-		    g.ForeColor = Color.RGB(200, 200, 255)
+		    g.DrawingColor = Color.RGB(200, 200, 255)
+		  Next
+		  
+		  // Draw Y-axis ticks and labels
+		  g.DrawingColor = Color.Black
+		  g.FontSize = 10
+		  Var numTicksY As Integer = 5
+		  For i As Integer = 0 To numTicksY
+		    Var tickVal As Double = (maxCount * i) / numTicksY
+		    Var tickY As Integer = originY - (i / numTicksY) * plotHeight
+		    g.DrawLine(originX - 5, tickY, originX, tickY)
+		    Var tickLabel As String = Format(tickVal, "0.0")
+		    g.DrawText(tickLabel, originX - 10 - g.TextWidth(tickLabel), tickY + g.TextHeight / 2)
+		  Next
+		  
+		  // Draw X-axis ticks and labels
+		  Var labelStep As Integer = Max(1, bins / 10)
+		  For i As Integer = 0 To bins - 1 Step labelStep
+		    Var x As Integer = originX + i * barWidth + (barWidth / 2)
+		    g.DrawLine(x, originY, x, originY + 5)
+		    Var tickLabel As String = Format(binCenters(i), "0.0")
+		    g.DrawText(tickLabel, x - g.TextWidth(tickLabel) / 2, originY + g.TextHeight + 2)
 		  Next
 		  
 		  // Draw normal distribution overlay
-		  g.ForeColor = Color.Red
-		  g.PenWidth = 2
+		  g.DrawingColor = Color.Red
+		  g.PenSize = 2
 		  
 		  Var prevX As Integer = -1
 		  Var prevY As Integer = -1
 		  
 		  For i As Integer = 0 To plotWidth Step 2
-		    Var x As Double = minVal + (i / plotWidth) * (maxVal - minVal)
-		    Var normalY As Double = (1 / (stdDev * Sqrt(2 * Pi))) * Exp(-0.5 * ((x - mean) / stdDev) ^ 2)
-		    
-		    // Scale to match histogram
+		    Var xVal As Double = minVal + (i / plotWidth) * (maxVal - minVal)
+		    Var normalY As Double = (1 / (stdDev * Sqrt(2 * Pi))) * Exp(-0.5 * ((xVal - mean) / stdDev) ^ 2)
 		    Var scaledY As Double = normalY * binWidth * data.Count
-		    Var plotY As Integer = margins + plotHeight - (scaledY / maxCount) * plotHeight
+		    Var plotY As Integer = originY - (scaledY / maxCount) * plotHeight
 		    
 		    If prevX >= 0 Then
-		      g.DrawLine(prevX, prevY, margins + i, plotY)
+		      g.DrawLine(originX + i - 2, prevY, originX + i, plotY)
 		    End If
 		    
-		    prevX = margins + i
+		    prevX = originX + i
 		    prevY = plotY
 		  Next
 		  
-		  // Add title and labels
-		  g.ForeColor = Color.Black
-		  g.PenWidth = 1
-		  g.TextFont = "Arial"
-		  g.TextSize = 14
-		  
-		  Var titleWidth As Integer = g.TextWidth(title)
+		  // Draw title
+		  g.DrawingColor = Color.Black
+		  g.FontName = "Arial"
+		  g.FontSize = 14
+		  Var titleWidth As Double = g.TextWidth(title)
 		  g.DrawText(title, (width - titleWidth) / 2, 25)
 		  
-		  g.TextSize = 10
-		  g.DrawText("Value", (width - g.TextWidth("Value")) / 2, height - 10)
-		  g.DrawText("Frequency", 10, (height + g.TextWidth("Frequency")) / 2)
+		  // Draw X-axis label
+		  g.FontSize = 10
+		  g.DrawText("Value", (width - g.TextWidth("Value")) / 2, height - 5)
+		  
+		  // Draw vertical Y-axis label: "Frequency", top to bottom
+		  Var freqLabel As String = "Frequency"
+		  Var freqCharHeight As Double = g.TextHeight
+		  Var totalLabelHeight As Double = freqCharHeight * freqLabel.Length
+		  
+		  // Left of Y-axis ticks
+		  Var freqX As Double = originX - 10 - g.TextWidth("100") - freqCharHeight  // adjust as needed
+		  
+		  // Vertically center the full label
+		  Var startY As Double = margins + (plotHeight - totalLabelHeight) / 2
+		  
+		  // Draw one character per line
+		  For i As Integer = 0 To freqLabel.Length - 1
+		    Var ch As String = freqLabel.Middle(i, 1)
+		    g.DrawText(ch, freqX, startY + (i * freqCharHeight))
+		  Next
+		  
 		  
 		  Return pic
 		End Function
@@ -744,8 +863,6 @@ Protected Class StatisticalAnalyzer
 
 	#tag Method, Flags = &h0
 		Function CreateQQPlot(data() As Double, title As String, width As Integer, height As Integer) As Picture
-		  
-		  //Function CreateQQPlot(data() As Double, title As String, width As Integer, height As Integer) As Picture
 		  Var pic As New Picture(width, height, 32)
 		  Var g As Graphics = pic.Graphics
 		  
@@ -753,29 +870,43 @@ Protected Class StatisticalAnalyzer
 		  Var sortedData() As Double = CloneDoubleArray(data)
 		  sortedData.Sort
 		  
-		  // Calculate theoretical quantiles (normal distribution)
 		  Var n As Integer = sortedData.Count
-		  Var theoreticalQuantiles() As Double
 		  Var observedQuantiles() As Double
+		  Var theoreticalQuantiles() As Double
 		  
 		  For i As Integer = 0 To n - 1
 		    Var p As Double = (i + 0.5) / n
-		    // Approximate inverse normal CDF
 		    Var z As Double = InverseNormalCDF(p)
 		    theoreticalQuantiles.Add(z)
 		    observedQuantiles.Add(sortedData(i))
 		  Next
 		  
-		  // Set up plotting area
+		  // Compute regression line
+		  Var sumX, sumY, sumXY, sumX2 As Double
+		  For i As Integer = 0 To n - 1
+		    sumX = sumX + theoreticalQuantiles(i)
+		    sumY = sumY + observedQuantiles(i)
+		    sumXY = sumXY + theoreticalQuantiles(i) * observedQuantiles(i)
+		    sumX2 = sumX2 + theoreticalQuantiles(i)^2
+		  Next
+		  
+		  Var meanX As Double = sumX / n
+		  Var meanY As Double = sumY / n
+		  Var slope As Double = (sumXY - n * meanX * meanY) / (sumX2 - n * meanX^2)
+		  Var intercept As Double = meanY - slope * meanX
+		  
+		  // Define plotting region
 		  Var margins As Integer = 80
 		  Var plotWidth As Integer = width - 2 * margins
 		  Var plotHeight As Integer = height - 2 * margins
+		  Var originX As Integer = margins
+		  Var originY As Integer = height - margins
 		  
-		  // Find ranges
-		  Var minTheoretical As Double = theoreticalQuantiles(0)
-		  Var maxTheoretical As Double = theoreticalQuantiles(n - 1)
-		  Var minObserved As Double = observedQuantiles(0)
-		  Var maxObserved As Double = observedQuantiles(n - 1)
+		  Var minVal As Double = Min(theoreticalQuantiles(0), observedQuantiles(0))
+		  Var maxVal As Double = Max(theoreticalQuantiles(n-1), observedQuantiles(n-1))
+		  Var pad As Double = (maxVal - minVal) * 0.05
+		  minVal = minVal - pad
+		  maxVal = maxVal + pad
 		  
 		  // Clear background
 		  g.DrawingColor = Color.White
@@ -783,38 +914,100 @@ Protected Class StatisticalAnalyzer
 		  
 		  // Draw axes
 		  g.DrawingColor = Color.Black
+		  g.DrawLine(originX, margins, originX, height - margins)
+		  g.DrawLine(originX, originY, width - margins, originY)
+		  
+		  // Axis ticks
+		  g.FontSize = 10
+		  For i As Integer = 0 To 5
+		    Var f As Double = i / 5
+		    Var tickVal As Double = minVal + f * (maxVal - minVal)
+		    Var xTick As Integer = originX + f * plotWidth
+		    Var yTick As Integer = originY - f * plotHeight
+		    
+		    g.DrawLine(xTick, originY, xTick, originY + 5)
+		    g.DrawText(Format(tickVal, "0.00"), xTick - g.TextWidth(Format(tickVal, "0.00")) / 2, originY + 20)
+		    
+		    g.DrawLine(originX - 5, yTick, originX, yTick)
+		    g.DrawText(Format(tickVal, "0.00"), originX - 10 - g.TextWidth(Format(tickVal, "0.00")), yTick + g.TextHeight / 2)
+		  Next
+		  
+		  // Vertical label
+		  Var yAxisLabel As String = "Observed Quantiles"
+		  For i As Integer = 0 To yAxisLabel.Length - 1
+		    Var ch As String = yAxisLabel.Middle(i, 1)
+		    Var x As Double = 15
+		    Var y As Double = margins + ((plotHeight - (yAxisLabel.Length * g.TextHeight)) / 2) + (i * g.TextHeight)
+		    g.DrawText(ch, x, y)
+		  Next
+		  
+		  g.DrawText("Theoretical Quantiles", (width - g.TextWidth("Theoretical Quantiles")) / 2, height - 10)
+		  
+		  // Estimate error
+		  Var se As Double = (maxVal - minVal) * 0.015
+		  
+		  // Draw regression line
+		  g.DrawingColor = Color.Red
+		  g.PenSize = 2
+		  Var px1 As Integer = originX + ((minVal - minVal) / (maxVal - minVal)) * plotWidth
+		  Var py1 As Integer = originY - ((intercept + slope * minVal - minVal) / (maxVal - minVal)) * plotHeight
+		  Var px2 As Integer = originX + ((maxVal - minVal) / (maxVal - minVal)) * plotWidth
+		  Var py2 As Integer = originY - ((intercept + slope * maxVal - minVal) / (maxVal - minVal)) * plotHeight
+		  g.DrawLine(px1, py1, px2, py2)
+		  
+		  // Draw points and check for outliers
+		  Var outlierCount As Integer = 0
+		  Var maxDeviation As Double = 0
 		  g.PenSize = 1
-		  g.DrawLine(margins, margins, margins, height - margins)  // Y-axis
-		  g.DrawLine(margins, height - margins, width - margins, height - margins)  // X-axis
-		  
-		  // Draw reference line (y = x) as dashed line
-		  g.DrawingColor = Color.Gray
-		  // Instead of: g.PenStyle = Graphics.PenStyle.Dash
-		  Var refStartX As Integer = margins
-		  Var refStartY As Integer = height - margins
-		  Var refEndX As Integer = width - margins
-		  Var refEndY As Integer = margins
-		  DrawDashedLine(g, refStartX, refStartY, refEndX, refEndY, 5)
-		  
-		  // Reset to solid for data points
-		  g.DrawingColor = Color.Blue
-		  
-		  // Plot data points
 		  For i As Integer = 0 To n - 1
-		    Var x As Integer = margins + ((theoreticalQuantiles(i) - minTheoretical) / (maxTheoretical - minTheoretical)) * plotWidth
-		    Var y As Integer = height - margins - ((observedQuantiles(i) - minObserved) / (maxObserved - minObserved)) * plotHeight
+		    Var xVal As Double = theoreticalQuantiles(i)
+		    Var yVal As Double = observedQuantiles(i)
+		    Var yHat As Double = intercept + slope * xVal
+		    Var residual As Double = Abs(yVal - yHat)
+		    Var deviation As Double = residual / se
+		    If deviation > 1.96 Then outlierCount = outlierCount + 1
+		    If deviation > maxDeviation Then maxDeviation = deviation
+		    
+		    Var x As Integer = originX + ((xVal - minVal) / (maxVal - minVal)) * plotWidth
+		    Var y As Integer = originY - ((yVal - minVal) / (maxVal - minVal)) * plotHeight
+		    g.DrawingColor = If(deviation > 1.96, Color.Orange, Color.Blue)
 		    g.FillOval(x - 2, y - 2, 4, 4)
 		  Next
 		  
-		  // Add title
+		  // Display interpretation
+		  Var rSquared As Double = CalculateRSquared(theoreticalQuantiles, observedQuantiles, slope, intercept)
+		  Var normalityText As String
+		  Var interpretationColor As Color
+		  If rSquared > 0.95 And outlierCount <= (n * 0.05) And maxDeviation < 3.0 Then
+		    normalityText = "NORMAL: Data appears normally distributed"
+		    interpretationColor = Color.Green
+		  ElseIf rSquared > 0.90 And outlierCount <= (n * 0.10) Then
+		    normalityText = "ACCEPTABLE: Minor deviations from normality"
+		    interpretationColor = Color.Orange
+		  Else
+		    normalityText = "NON-NORMAL: Significant deviations detected"
+		    interpretationColor = Color.Red
+		  End If
+		  
+		  g.FontSize = 12
+		  g.DrawingColor = interpretationColor
+		  g.DrawText(normalityText, margins, height - 50)
+		  
+		  Var statsText As String = "R² = " + Format(rSquared, "0.000") + " | Outliers: " + Str(outlierCount) + "/" + Str(n) + " (" + Format((outlierCount/n)*100, "0.0") + "%)"
+		  g.FontSize = 10
 		  g.DrawingColor = Color.Black
-		  g.FontName = "Arial"
+		  g.DrawText(statsText, margins, height - 30)
+		  
+		  // Add heteroscedasticity info
+		  Var heteroText As String = AssessHeteroscedasticity(theoreticalQuantiles, observedQuantiles, slope, intercept, se)
+		  g.DrawText(heteroText, margins, height - 15)
+		  
+		  // Title
 		  g.FontSize = 16
 		  Var titleWidth As Double = g.TextWidth(title)
 		  g.DrawText(title, (width - titleWidth) / 2, 30)
 		  
 		  Return pic
-		  
 		End Function
 	#tag EndMethod
 
@@ -1106,21 +1299,41 @@ Protected Class StatisticalAnalyzer
 
 	#tag Method, Flags = &h0
 		Function InverseNormalCDF(p As Double) As Double
-		  //Private Function InverseNormalCDF(p As Double) As Double
-		  // Beasley-Springer-Moro algorithm approximation
-		  Const a0 As Double = 2.515517
-		  Const a1 As Double = 0.802853
-		  Const a2 As Double = 0.010328
-		  Const b1 As Double = 1.432788
-		  Const b2 As Double = 0.189269
-		  Const b3 As Double = 0.001308
+		  //Function InverseNormalCDF(p As Double) As Double
+		  If p <= 0 Or p >= 1 Then
+		    Return 0 // Avoid domain errors
+		  End If
 		  
-		  If p < 0.5 Then
-		    Var t As Double = Sqrt(-2 * Log(p))
-		    Return -((a0 + a1 * t + a2 * t * t) / (1 + b1 * t + b2 * t * t + b3 * t * t * t))
+		  // Coefficients for rational approximations
+		  Var a() As Double = Array(2.50662823884, -18.61500062529, 41.39119773534, -25.44106049637)
+		  Var b() As Double = Array(-8.47351093090, 23.08336743743, -21.06224101826, 3.13082909833)
+		  Var c() As Double = Array(0.3374754822726147, 0.9761690190917186, 0.1607979714918209, 0.0276438810333863, _
+		  0.0038405729373609, 0.0003951896511919, 0.0000321767881768, 0.0000002888167364, 0.0000003960315187)
+		  
+		  Var x As Double = p - 0.5
+		  Var r As Double
+		  
+		  If Abs(x) < 0.42 Then
+		    r = x * x
+		    Return x * (((a(3) * r + a(2)) * r + a(1)) * r + a(0)) / ((((b(3) * r + b(2)) * r + b(1)) * r + b(0)) * r + 1.0)
 		  Else
-		    Var t As Double = Sqrt(-2 * Log(1 - p))
-		    Return (a0 + a1 * t + a2 * t * t) / (1 + b1 * t + b2 * t * t + b3 * t * t * t)
+		    If x < 0 Then
+		      r = p
+		    Else
+		      r = 1 - p
+		    End If
+		    
+		    r = Log(-Log(r))
+		    Var result As Double = c(0)
+		    For i As Integer = 1 To 8
+		      result = result + c(i) * r^i
+		    Next
+		    
+		    If x < 0 Then
+		      Return -result
+		    Else
+		      Return result
+		    End If
 		  End If
 		  
 		End Function

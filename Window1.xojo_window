@@ -11,42 +11,394 @@ Begin DesktopWindow Window1
    HasMaximizeButton=   True
    HasMinimizeButton=   True
    HasTitleBar     =   True
-   Height          =   696
+   Height          =   688
    ImplicitInstance=   True
    MacProcID       =   0
    MaximumHeight   =   32000
    MaximumWidth    =   32000
-   MenuBar         =   236912639
+   MenuBar         =   ""
    MenuBarVisible  =   False
    MinimumHeight   =   64
    MinimumWidth    =   64
    Resizeable      =   True
-   Title           =   "Untitled"
+   Title           =   "Statistical Analysis Demonstration"
    Type            =   0
    Visible         =   True
-   Width           =   892
+   Width           =   816
+   Begin DesktopBevelButton BoxPlotBevelButton
+      AllowAutoDeactivate=   True
+      AllowFocus      =   True
+      AllowTabStop    =   True
+      BackgroundColor =   &c00000000
+      BevelStyle      =   0
+      Bold            =   False
+      ButtonStyle     =   0
+      Caption         =   "Boxplot"
+      CaptionAlignment=   3
+      CaptionDelta    =   0
+      CaptionPosition =   1
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      HasBackgroundColor=   False
+      Height          =   22
+      Icon            =   0
+      IconAlignment   =   0
+      IconDeltaX      =   0
+      IconDeltaY      =   0
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   67
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      MenuStyle       =   0
+      Scope           =   0
+      TabIndex        =   0
+      TabPanelIndex   =   0
+      TextColor       =   &c00000000
+      Tooltip         =   ""
+      Top             =   54
+      Transparent     =   False
+      Underline       =   False
+      Value           =   False
+      Visible         =   True
+      Width           =   101
+   End
+   Begin DesktopBevelButton TwoBoxplotsBevelButton
+      AllowAutoDeactivate=   True
+      AllowFocus      =   True
+      AllowTabStop    =   True
+      BackgroundColor =   &c00000000
+      BevelStyle      =   0
+      Bold            =   False
+      ButtonStyle     =   0
+      Caption         =   "Compare two boxplots"
+      CaptionAlignment=   3
+      CaptionDelta    =   0
+      CaptionPosition =   1
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      HasBackgroundColor=   False
+      Height          =   22
+      Icon            =   0
+      IconAlignment   =   0
+      IconDeltaX      =   0
+      IconDeltaY      =   0
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   8
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      MenuStyle       =   0
+      Scope           =   0
+      TabIndex        =   1
+      TabPanelIndex   =   0
+      TextColor       =   &c00000000
+      Tooltip         =   ""
+      Top             =   88
+      Transparent     =   False
+      Underline       =   False
+      Value           =   False
+      Visible         =   True
+      Width           =   160
+   End
+   Begin DesktopBevelButton BA_BevelButton
+      AllowAutoDeactivate=   True
+      AllowFocus      =   True
+      AllowTabStop    =   True
+      BackgroundColor =   &c00000000
+      BevelStyle      =   0
+      Bold            =   False
+      ButtonStyle     =   0
+      Caption         =   "Bland-Altman"
+      CaptionAlignment=   3
+      CaptionDelta    =   0
+      CaptionPosition =   1
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      HasBackgroundColor=   False
+      Height          =   22
+      Icon            =   0
+      IconAlignment   =   0
+      IconDeltaX      =   0
+      IconDeltaY      =   0
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   67
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      MenuStyle       =   0
+      Scope           =   0
+      TabIndex        =   2
+      TabPanelIndex   =   0
+      TextColor       =   &c00000000
+      Tooltip         =   ""
+      Top             =   163
+      Transparent     =   False
+      Underline       =   False
+      Value           =   False
+      Visible         =   True
+      Width           =   101
+   End
+   Begin DesktopBevelButton QQBevelButton
+      AllowAutoDeactivate=   True
+      AllowFocus      =   True
+      AllowTabStop    =   True
+      BackgroundColor =   &c00000000
+      BevelStyle      =   0
+      Bold            =   False
+      ButtonStyle     =   0
+      Caption         =   "QQ Plot"
+      CaptionAlignment=   3
+      CaptionDelta    =   0
+      CaptionPosition =   1
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      HasBackgroundColor=   False
+      Height          =   22
+      Icon            =   0
+      IconAlignment   =   0
+      IconDeltaX      =   0
+      IconDeltaY      =   0
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   67
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      MenuStyle       =   0
+      Scope           =   0
+      TabIndex        =   3
+      TabPanelIndex   =   0
+      TextColor       =   &c00000000
+      Tooltip         =   ""
+      Top             =   440
+      Transparent     =   False
+      Underline       =   False
+      Value           =   False
+      Visible         =   True
+      Width           =   101
+   End
+   Begin DesktopBevelButton BevelButton13
+      AllowAutoDeactivate=   True
+      AllowFocus      =   True
+      AllowTabStop    =   True
+      BackgroundColor =   &c00000000
+      BevelStyle      =   0
+      Bold            =   False
+      ButtonStyle     =   0
+      Caption         =   "Untitled"
+      CaptionAlignment=   3
+      CaptionDelta    =   0
+      CaptionPosition =   1
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      HasBackgroundColor=   False
+      Height          =   22
+      Icon            =   0
+      IconAlignment   =   0
+      IconDeltaX      =   0
+      IconDeltaY      =   0
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   67
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      MenuStyle       =   0
+      Scope           =   0
+      TabIndex        =   4
+      TabPanelIndex   =   0
+      TextColor       =   &c00000000
+      Tooltip         =   ""
+      Top             =   545
+      Transparent     =   False
+      Underline       =   False
+      Value           =   False
+      Visible         =   True
+      Width           =   101
+   End
+   Begin DesktopBevelButton BevelButton12
+      AllowAutoDeactivate=   True
+      AllowFocus      =   True
+      AllowTabStop    =   True
+      BackgroundColor =   &c00000000
+      BevelStyle      =   0
+      Bold            =   False
+      ButtonStyle     =   0
+      Caption         =   "Untitled"
+      CaptionAlignment=   3
+      CaptionDelta    =   0
+      CaptionPosition =   1
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      HasBackgroundColor=   False
+      Height          =   22
+      Icon            =   0
+      IconAlignment   =   0
+      IconDeltaX      =   0
+      IconDeltaY      =   0
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   67
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      MenuStyle       =   0
+      Scope           =   0
+      TabIndex        =   5
+      TabPanelIndex   =   0
+      TextColor       =   &c00000000
+      Tooltip         =   ""
+      Top             =   475
+      Transparent     =   False
+      Underline       =   False
+      Value           =   False
+      Visible         =   True
+      Width           =   101
+   End
+   Begin DesktopBevelButton BevelButton11
+      AllowAutoDeactivate=   True
+      AllowFocus      =   True
+      AllowTabStop    =   True
+      BackgroundColor =   &c00000000
+      BevelStyle      =   0
+      Bold            =   False
+      ButtonStyle     =   0
+      Caption         =   "Untitled"
+      CaptionAlignment=   3
+      CaptionDelta    =   0
+      CaptionPosition =   1
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      HasBackgroundColor=   False
+      Height          =   22
+      Icon            =   0
+      IconAlignment   =   0
+      IconDeltaX      =   0
+      IconDeltaY      =   0
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   67
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      MenuStyle       =   0
+      Scope           =   0
+      TabIndex        =   6
+      TabPanelIndex   =   0
+      TextColor       =   &c00000000
+      Tooltip         =   ""
+      Top             =   510
+      Transparent     =   False
+      Underline       =   False
+      Value           =   False
+      Visible         =   True
+      Width           =   101
+   End
+   Begin DesktopBevelButton HistogramBevelButton
+      AllowAutoDeactivate=   True
+      AllowFocus      =   True
+      AllowTabStop    =   True
+      BackgroundColor =   &c00000000
+      BevelStyle      =   0
+      Bold            =   False
+      ButtonStyle     =   0
+      Caption         =   "Histogram"
+      CaptionAlignment=   3
+      CaptionDelta    =   0
+      CaptionPosition =   1
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      HasBackgroundColor=   False
+      Height          =   22
+      Icon            =   0
+      IconAlignment   =   0
+      IconDeltaX      =   0
+      IconDeltaY      =   0
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   67
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      MenuStyle       =   0
+      Scope           =   0
+      TabIndex        =   7
+      TabPanelIndex   =   0
+      TextColor       =   &c00000000
+      Tooltip         =   ""
+      Top             =   122
+      Transparent     =   False
+      Underline       =   False
+      Value           =   False
+      Visible         =   True
+      Width           =   101
+   End
    Begin DesktopImageViewer ImageViewer1
       AllowAutoDeactivate=   True
       AllowTabStop    =   True
       Enabled         =   True
-      Height          =   616
+      Height          =   580
       Image           =   0
       Index           =   -2147483648
       InitialParent   =   ""
-      Left            =   39
+      Left            =   179
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
       Scope           =   0
-      TabIndex        =   0
+      TabIndex        =   8
       TabPanelIndex   =   0
       Tooltip         =   ""
-      Top             =   30
+      Top             =   54
       Transparent     =   False
       Visible         =   True
-      Width           =   819
+      Width           =   617
    End
 End
 #tag EndDesktopWindow
@@ -54,37 +406,12 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Opening()
-		  Var analyzer As New StatisticalAnalyzer
-		  Var data() As Double = Array(1.2, 2.3, 1.8, 2.1, 1.9, 2.4, 1.7, 2.2)
-		  var data2() As Double = Array(1.4, 1.3, 1.9, 3.1, 1.5, 2.0, 1.0, 2.20)
-		  
-		  // Descriptive statistics
-		  Var stats As Dictionary = analyzer.DescriptiveStatistics(data)
-		  
-		  // Test for normality
-		  Var normalityTest As Dictionary = analyzer.AndersonDarlingTest(data2)
-		  
-		  // Create visualizations
-		  Var boxPlot As Picture = analyzer.CreateBoxPlot(data2, "Sample Data")
-		  ImageViewer1.Image = boxplot
-		  
-		  
-		  var dualBoxPlot  as picture = analyzer.CreateDualBoxPlot(data , data2, "2 Box Plots", "Plot 1","Plot 2", width, height)
-		  ImageViewer1.Image = dualBoxPlot
-		  'Var histogram As Picture = analyzer.CreateHistogram(data, "Distribution", 10)
-		  'ImageViewer2.Image = histogram
-		  
-		  'Var qqPlot As Picture = analyzer.CreateQQPlot(data2, "Normality Check",width,height)
-		  'ImageViewer1.Image = qqPlot
-		  
-		  'Var Bland_AltmanPlot as Picture = analyzer.CreateBlandAltmanPlot(data,data2,"Bland-Altman Plot",width,height)
-		  'imageviewer1.image =  Bland_AltmanPlot
 		  
 		End Sub
 	#tag EndEvent
 
 
-	#tag Note, Name = Dexcription
+	#tag Note, Name = Description
 		A comprehensive StatisticalAnalyzer class for Xojo 2025 that includes:Description
 		Statistical Methods:
 		
@@ -94,7 +421,7 @@ End
 		Linear Regression: With correlation, R², significance testing
 		
 		Example Usage:
-		xojoVar analyzer As New StatisticalAnalyzer
+		Var analyzer As New StatisticalAnalyzer
 		Var data() As Double = Array(1.2, 2.3, 1.8, 2.1, 1.9, 2.4, 1.7, 2.2)
 		
 		// Descriptive statistics
@@ -114,6 +441,101 @@ End
 
 #tag EndWindowCode
 
+#tag Events BoxPlotBevelButton
+	#tag Event
+		Sub Pressed()
+		  Var analyzer As New StatisticalAnalyzer
+		  Var data() As Double = Array(1.2, 2.3, 1.8, 2.1, 1.9, 2.4, 1.7, 2.2)
+		  
+		  
+		  
+		  
+		  Var boxPlot As Picture = analyzer.CreateBoxPlot(data, "Sample Data")
+		  ImageViewer1.image = boxPlot
+		  
+		  // Create visualizations
+		  
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events TwoBoxplotsBevelButton
+	#tag Event
+		Sub Pressed()
+		  Var analyzer As New StatisticalAnalyzer
+		  Var data() As Double = Array(1.2, 2.3, 1.8, 2.1, 1.9, 2.4, 1.7, 2.2)
+		  Var data2() As Double = Array(1.4, 1.3, 1.9, 3.1, 1.5, 2.0, 1.0, 2.20)
+		  
+		  Var dualBoxPlot  As picture = analyzer.CreateDualBoxPlot(data , data2, "2 Box Plots", "Plot 1","Plot 2", width, height)
+		  ImageViewer1.Image = dualBoxPlot
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events BA_BevelButton
+	#tag Event
+		Sub Pressed()
+		  Var analyzer As New StatisticalAnalyzer
+		  Var data() As Double = Array(1.2, 2.3, 1.8, 2.1, 1.9, 2.4, 1.7, 2.2)
+		  Var data2() As Double = Array(1.4, 1.3, 1.9, 3.1, 1.5, 2.0, 1.0, 2.20)
+		  
+		  // Descriptive statistics
+		  Var stats As Dictionary = analyzer.DescriptiveStatistics(data)
+		  
+		  // Test for normality
+		  Var normalityTest As Dictionary = analyzer.AndersonDarlingTest(data)
+		  
+		  // Create visualizations
+		  
+		  
+		  
+		  
+		  
+		  
+		  'Var qqPlot As Picture = analyzer.CreateQQPlot(data2, "Normality Check",width,height)
+		  'ImageViewer1.Image = qqPlot
+		  
+		  Var Bland_AltmanPlot As Picture = analyzer.CreateBlandAltmanPlot(data,data2,"Bland-Altman Plot",width,height)
+		  imageviewer1.image =  Bland_AltmanPlot
+		  
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events QQBevelButton
+	#tag Event
+		Sub Pressed()
+		  //Function CreateQQPlot(data() As Double, title As String, width As Integer, height As Integer) As Picture
+		  Var analyzer As New StatisticalAnalyzer
+		  Var data1() As Double = Array(1.2, 2.3, 1.8, 2.1, 1.9, 2.4, 1.7, 2.2)
+		  Var data2() As Double = Array(1.4, 1.3, 1.9, 3.1, 1.5, 2.0, 1.0, 2.20)
+		  
+		  
+		  
+		  
+		  Var QQPlot As Picture = analyzer.CreateQQPlot(data2, "QQ Plot for Normality ", width,height)
+		  ImageViewer1.Image = QQPlot
+		  
+		  
+		  
+		  
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events HistogramBevelButton
+	#tag Event
+		Sub Pressed()
+		  Var analyzer As New StatisticalAnalyzer
+		  Var data1() As Double = Array(1.2, 2.3, 1.8, 2.1, 1.9, 2.4, 1.7, 2.2)
+		  Var data2() As Double = Array(1.4, 1.3, 1.9, 3.1, 1.5, 2.0, 1.0, 2.20)
+		  
+		  
+		  
+		  
+		  Var histogram As Picture = analyzer.CreateHistogram(data1, "Frequency Distribution", 10)
+		  ImageViewer1.Image = histogram
+		  
+		  
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
 		Name="Name"
