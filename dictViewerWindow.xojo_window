@@ -70,9 +70,11 @@ Begin DesktopWindow dictViewerWindow
       Underline       =   False
       Visible         =   True
       Width           =   852
+      _ScrollOffset   =   0
       _ScrollWidth    =   -1
    End
    Begin DesktopBevelButton CSVBevelButton
+      Active          =   False
       AllowAutoDeactivate=   True
       AllowFocus      =   True
       AllowTabStop    =   True
@@ -104,6 +106,7 @@ Begin DesktopWindow dictViewerWindow
       LockRight       =   False
       LockTop         =   True
       MenuStyle       =   0
+      PanelIndex      =   0
       Scope           =   0
       TabIndex        =   1
       TabPanelIndex   =   0
@@ -115,8 +118,13 @@ Begin DesktopWindow dictViewerWindow
       Value           =   False
       Visible         =   True
       Width           =   150
+      _mIndex         =   0
+      _mInitialParent =   ""
+      _mName          =   ""
+      _mPanelIndex    =   0
    End
    Begin DesktopBevelButton BevelButton2
+      Active          =   False
       AllowAutoDeactivate=   True
       AllowFocus      =   True
       AllowTabStop    =   True
@@ -148,6 +156,7 @@ Begin DesktopWindow dictViewerWindow
       LockRight       =   False
       LockTop         =   True
       MenuStyle       =   0
+      PanelIndex      =   0
       Scope           =   0
       TabIndex        =   2
       TabPanelIndex   =   0
@@ -159,8 +168,13 @@ Begin DesktopWindow dictViewerWindow
       Value           =   False
       Visible         =   True
       Width           =   144
+      _mIndex         =   0
+      _mInitialParent =   ""
+      _mName          =   ""
+      _mPanelIndex    =   0
    End
    Begin DesktopBevelButton CloseBevelButton1
+      Active          =   False
       AllowAutoDeactivate=   True
       AllowFocus      =   True
       AllowTabStop    =   True
@@ -192,6 +206,7 @@ Begin DesktopWindow dictViewerWindow
       LockRight       =   False
       LockTop         =   True
       MenuStyle       =   0
+      PanelIndex      =   0
       Scope           =   2
       TabIndex        =   3
       TabPanelIndex   =   0
@@ -203,6 +218,10 @@ Begin DesktopWindow dictViewerWindow
       Value           =   False
       Visible         =   True
       Width           =   87
+      _mIndex         =   0
+      _mInitialParent =   ""
+      _mName          =   ""
+      _mPanelIndex    =   0
    End
 End
 #tag EndDesktopWindow

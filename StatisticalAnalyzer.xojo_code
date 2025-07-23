@@ -770,16 +770,11 @@ Protected Class StatisticalAnalyzer
 		    g.DrawText(Format(xVal, "0.0"), xPix - 10, topMargin + plotHeight + 20)
 		  Next
 		  
-		  // Labels: stats display
+		  // Label
 		  g.TextSize = 10
-		  Var labelY As Integer = topMargin + 20
-		  g.DrawText("Mean: " + Format(mean, "0.00"), leftMargin + 10, labelY)
-		  labelY = labelY + 15
-		  g.DrawText("Std Dev: " + Format(sd, "0.00"), leftMargin + 10, labelY)
-		  labelY = labelY + 15
-		  g.DrawText("SEM: " + Format(sem, "0.000"), leftMargin + 10, labelY)
-		  labelY = labelY + 15
-		  g.DrawText("95% CI: [" + Format(ciLower, "0.00") + ", " + Format(ciUpper, "0.00") + "]", leftMargin + 10, labelY)
+		  g.DrawText("Mean: " + Format(mean, "0.00"), leftMargin + 10, topMargin + 20)
+		  g.DrawText("95% CI: [" + Format(ciLower, "0.00") + ", " + Format(ciUpper, "0.00") + "]", leftMargin + 10, topMargin + 35)
+		  
 		  Return pic
 		  
 		End Function
@@ -789,7 +784,7 @@ Protected Class StatisticalAnalyzer
 		Function CreateDualBoxPlot(data1() As Double, data2() As Double, title As String, label1 As String, label2 As String, width As Integer, height As Integer) As Picture
 		  //Function CreateDualBoxPlot(data1() As Double, data2() As Double, title As String, label1 As String, label2 As String, width As Integer, height As Integer) As Picture
 		  
-		  // Create a new picture object with specified dimensions and 32-bit color depth
+		  // Create a new picture object with specified Varensions and 32-bit color depth
 		  Var pic As New Picture(width, height, 32)
 		  Var g As Graphics = pic.Graphics
 		  
