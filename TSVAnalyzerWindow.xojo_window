@@ -38,7 +38,7 @@ Begin DesktopWindow TSVAnalyzerWindow
       Height          =   20
       Index           =   -2147483648
       Italic          =   False
-      Left            =   432
+      Left            =   54
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
@@ -50,7 +50,7 @@ Begin DesktopWindow TSVAnalyzerWindow
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   362
+      Top             =   394
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -69,7 +69,7 @@ Begin DesktopWindow TSVAnalyzerWindow
       Height          =   20
       Index           =   -2147483648
       Italic          =   False
-      Left            =   570
+      Left            =   271
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
@@ -81,7 +81,7 @@ Begin DesktopWindow TSVAnalyzerWindow
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   362
+      Top             =   394
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -100,7 +100,7 @@ Begin DesktopWindow TSVAnalyzerWindow
       Height          =   20
       Index           =   -2147483648
       Italic          =   False
-      Left            =   503
+      Left            =   506
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
@@ -112,11 +112,90 @@ Begin DesktopWindow TSVAnalyzerWindow
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   429
+      Top             =   394
       Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   135
+   End
+   Begin DesktopListBox HeaderListBox
+      AllowAutoDeactivate=   True
+      AllowAutoHideScrollbars=   True
+      AllowExpandableRows=   False
+      AllowFocusRing  =   True
+      AllowResizableColumns=   False
+      AllowRowDragging=   False
+      AllowRowReordering=   False
+      Bold            =   False
+      ColumnCount     =   1
+      ColumnWidths    =   ""
+      DefaultRowHeight=   -1
+      DropIndicatorVisible=   False
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      GridLineStyle   =   0
+      HasBorder       =   True
+      HasHeader       =   True
+      HasHorizontalScrollbar=   False
+      HasVerticalScrollbar=   True
+      HeadingIndex    =   -1
+      Height          =   200
+      Index           =   -2147483648
+      InitialValue    =   ""
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      RequiresSelection=   False
+      RowSelectionType=   0
+      Scope           =   2
+      TabIndex        =   3
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   20
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   748
+      _ScrollWidth    =   -1
+   End
+   Begin DesktopLabel StatusLabel
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   17
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   4
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Untitled"
+      TextAlignment   =   0
+      TextColor       =   &c000000
+      Tooltip         =   ""
+      Top             =   253
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   388
    End
 End
 #tag EndDesktopWindow
@@ -151,7 +230,7 @@ End
 		    db.DatabaseFile = dbFile
 		    // ... (rest of the method remains the same)
 		  Catch err As RuntimeException
-		    RaiseEvent ErrorOccurred("Error creating SQLite database: " + err.Message)
+		    MessageBox("Error creating SQLite database: " + err.Message)
 		    Return False
 		  End Try
 		End Function
@@ -201,8 +280,8 @@ End
 		Function GetSelectedHeaders(listBox As DesktopListBox) As String()
 		  Dim selectedHeaders() As String
 		  For i As Integer = 0 To listBox.RowCount - 1
-		    If listBox.Selected(i) Then
-		      selectedHeaders.Append(listBox.CellValueAt(i, 0))
+		    If listBox.RowSelectedAt(i) Then
+		      selectedHeaders.Append(listBox.CellTextAt(i, 0))
 		    End If
 		  Next
 		  Return selectedHeaders
@@ -216,9 +295,45 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub LoadHeadersFromTSVFile(file As FolderItem, HeaderListBox As DesktopListBox)
+		  // Public Sub LoadHeadersFromTSVFile(file As FolderItem, HeaderListBox As DesktopListBox)
+		  If file = Nil Or Not file.Exists Then
+		    MessageBox("File not found.")
+		    Return
+		  End If
+		  
+		  Try
+		    Var tin As TextInputStream = TextInputStream.Open(file)
+		    tin.Encoding = Encodings.UTF8
+		    
+		    // Read the first line (header row)
+		    Var headerLine As String = tin.ReadLine
+		    Var headers() As String = headerLine.Split(Chr(9)) // Tab-separated
+		    
+		    // Clear the listbox and prepare it for single-column display
+		    HeaderListBox.RemoveAllRows
+		    HeaderListBox.ColumnCount = 1
+		    HeaderListBox.HasHeader = True
+		    HeaderListBox.HeaderAt(0) = "Column Headers"
+		    
+		    // Add each header to the listbox
+		    For Each header As String In headers
+		      HeaderListBox.AddRow(header)
+		    Next
+		    
+		    tin.Close
+		    
+		  Catch e As IOException
+		    MessageBox("Error reading the file: " + e.Message)
+		  End Try
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function LoadTSVFile(file As FolderItem) As Boolean
 		  If file = Nil Or Not file.Exists Then
-		    RaiseEvent ErrorOccurred("TSV file does not exist")
+		    MessageBox("TSV file does not exist")
 		    Return False
 		  End If
 		  Try
@@ -228,7 +343,7 @@ End
 		    input.Close
 		    Dim lines() As String = allText.Split(EndOfLine)
 		    If lines.Ubound < 1 Then
-		      RaiseEvent ErrorOccurred("File appears to be empty or has no data rows")
+		      MessageBox("File appears to be empty or has no data rows")
 		      Return False
 		    End If
 		    mHeaders = lines(0).Split(Chr(9))
@@ -241,10 +356,10 @@ End
 		    Next
 		    mSelectedColumns.RemoveAll
 		    mColumnData.RemoveAll
-		    RaiseEvent HeadersLoaded(mHeaders)
+		    'MessageBox(mHeaders)
 		    Return True
 		  Catch err As RuntimeException
-		    RaiseEvent ErrorOccurred("Error reading TSV file: " + err.Message)
+		    MessageBox("Error reading TSV file: " + err.Message)
 		    Return False
 		  End Try
 		End Function
@@ -253,7 +368,7 @@ End
 	#tag Method, Flags = &h0
 		Function LoadTSVFromFolder(folder As FolderItem) As Boolean
 		  If folder = Nil Or Not folder.Exists Or Not folder.IsFolder Then
-		    RaiseEvent ErrorOccurred("Invalid folder specified")
+		    MessageBox("Invalid folder specified")
 		    Return False
 		  End If
 		  Dim tsvFiles() As FolderItem
@@ -267,7 +382,7 @@ End
 		    End If
 		  Next
 		  If tsvFiles.Ubound = -1 Then
-		    RaiseEvent ErrorOccurred("No TSV files found in the specified folder")
+		    MessageBox("No TSV files found in the specified folder")
 		    Return False
 		  End If
 		  mTSVFile = tsvFiles(0)
@@ -287,7 +402,7 @@ End
 	#tag Method, Flags = &h0
 		Function ProcessSelectedColumns(selectedHeaders() As String) As Boolean
 		  If selectedHeaders.Ubound = -1 Then
-		    RaiseEvent ErrorOccurred("No columns selected")
+		    MessageBox("No columns selected")
 		    Return False
 		  End If
 		  mSelectedColumns.RemoveAll
@@ -319,7 +434,7 @@ End
 		      mColumnData.Value(header) = columnValues
 		    End If
 		  Next
-		  RaiseEvent DataProcessed(selectedHeaders.Ubound + 1, mRawData.Ubound + 1)
+		  'MessageBox("dataProcessed: " + str(selectedHeaders.Ubound + 1), str( mRawData.Ubound + 1))
 		  Return True
 		End Function
 	#tag EndMethod
@@ -351,13 +466,14 @@ End
 #tag Events LoadButton
 	#tag Event
 		Sub Pressed()
-		  Dim dlg As New OpenFileDialog
-		  dlg.Filter = "TSV Files|*.tsv"
-		  Dim file As FolderItem = dlg.ShowModal
-		  If file <> Nil Then
-		    If Not analyzer.LoadTSVFile(file) Then
-		      // Error handled by ErrorHandler
-		    End If
+		  Var dlg As New OpenFileDialog
+		  dlg.Title = "Choose a TSV File"
+		  dlg.Filter = FileTypeGroup1.Text // You can define your own file type group
+		  dlg.InitialFolder = SpecialFolder.Documents
+		  
+		  Var f As FolderItem = dlg.ShowModal
+		  If f <> Nil Then
+		    LoadHeadersFromTSVFile(f, HeaderListBox)
 		  End If
 		End Sub
 	#tag EndEvent
@@ -365,8 +481,8 @@ End
 #tag Events ProcessButton
 	#tag Event
 		Sub Pressed()
-		  Dim selectedHeaders() As String = analyzer.GetSelectedHeaders(HeaderListBox)
-		  If Not analyzer.ProcessSelectedColumns(selectedHeaders) Then
+		  Dim selectedHeaders() As String = GetSelectedHeaders(HeaderListBox)
+		  If Not ProcessSelectedColumns(selectedHeaders) Then
 		    // Error handled by ErrorHandler
 		  End If
 		End Sub
@@ -385,17 +501,18 @@ End
 		      StatusLabel.Text = "Exporting to SQLite database..."
 		    End If
 		    
-		    If analyzer.ExportToSQLite(dbFile) Then
+		    If ExportToSQLite(dbFile) Then
 		      If StatusLabel <> Nil Then
 		        StatusLabel.Text = "Successfully exported to SQLite database."
 		      End If
 		      
 		      Dim dialog As New MessageDialog
+		      Var b As MessageDialogButton 
 		      dialog.Icon = MessageDialog.GraphicNote
 		      dialog.ActionButton.Caption = "OK"
 		      dialog.Message = "Export Complete"
 		      dialog.Explanation = "Data has been successfully exported to: " + dbFile.NativePath
-		      dialog.ShowModal()
+		      b = dialog.ShowModal()
 		    End If
 		    // Error will be handled by ErrorHandler event if export fails
 		  End If
