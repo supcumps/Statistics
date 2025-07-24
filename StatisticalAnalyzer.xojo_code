@@ -1432,37 +1432,37 @@ Protected Class StatisticalAnalyzer
 		  
 		  ' Populate result dictionary
 		  result.Value("n") = n
-		  result.Value("mean") = mean
-		  result.Value("median") = median
-		  result.Value("std_dev") = stdDev
-		  result.Value("variance") = variance
-		  result.Value("min") = sortedData(0)
-		  result.Value("max") = sortedData(n - 1)
-		  result.Value("range") = sortedData(n - 1) - sortedData(0)
-		  result.Value("q1") = q1
-		  result.Value("q3") = q3
-		  result.Value("iqr") = iqr
-		  result.Value("skewness") = skewness
-		  result.Value("kurtosis") = kurtosis
-		  result.Value("sem") = sem
-		  result.Value("ci_95_lower") = ciLower
-		  result.Value("ci_95_upper") = ciUpper
-		  result.Value("ci_95_width") = ciWidth
+		  result.Value("mean") = FormatToTwoDecimals(mean)
+		  result.Value("median") =  FormatToTwoDecimals(median)
+		  result.Value("std_dev") =  FormatToTwoDecimals(stdDev)
+		  result.Value("variance") =  FormatToTwoDecimals(variance)
+		  result.Value("min") =  FormatToTwoDecimals(sortedData(0))
+		  result.Value("max") =  FormatToTwoDecimals(sortedData(n - 1))
+		  result.Value("range") =  FormatToTwoDecimals(sortedData(n - 1) - sortedData(0))
+		  result.Value("q1") =  FormatToTwoDecimals(q1)
+		  result.Value("q3") = FormatToTwoDecimals( q3)
+		  result.Value("iqr") = FormatToTwoDecimals(iqr)
+		  result.Value("skewness") =  FormatToTwoDecimals(skewness)
+		  result.Value("kurtosis") =  FormatToTwoDecimals(kurtosis)
+		  result.Value("sem") =  FormatToTwoDecimals(sem)
+		  result.Value("ci_95_lower") =  FormatToTwoDecimals(ciLower)
+		  result.Value("ci_95_upper") =  FormatToTwoDecimals(ciUpper)
+		  result.Value("ci_95_width") =  FormatToTwoDecimals(ciWidth)
 		  
 		  If Not bootMeanCI.HasKey("error") Then
 		    Var lower As Double = bootMeanCI.Value("lower")
 		    Var upper As Double = bootMeanCI.Value("upper")
-		    result.Value("bootstrap_mean_ci_lower") = lower
-		    result.Value("bootstrap_mean_ci_upper") = upper
-		    result.Value("bootstrap_mean_ci_width") = upper - lower
+		    result.Value("bootstrap_mean_ci_lower") =  FormatToTwoDecimals(lower)
+		    result.Value("bootstrap_mean_ci_upper") = FormatToTwoDecimals( upper)
+		    result.Value("bootstrap_mean_ci_width") =  FormatToTwoDecimals(upper - lower)
 		  End If
 		  
 		  If Not bootMedCI.HasKey("error") Then
 		    Var lower As Double = bootMedCI.Value("lower")
 		    Var upper As Double = bootMedCI.Value("upper")
-		    result.Value("bootstrap_median_ci_lower") = lower
-		    result.Value("bootstrap_median_ci_upper") = upper
-		    result.Value("bootstrap_median_ci_width") = upper - lower
+		    result.Value("bootstrap_median_ci_lower") =  FormatToTwoDecimals(lower)
+		    result.Value("bootstrap_median_ci_upper") =  FormatToTwoDecimals(upper)
+		    result.Value("bootstrap_median_ci_width") =  FormatToTwoDecimals(upper - lower)
 		  End If
 		  
 		  Return result
@@ -1569,6 +1569,12 @@ Protected Class StatisticalAnalyzer
 		  Next
 		  Return result
 		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function FormatToTwoDecimals(value As Double) As String
+		    Return Format(value, "##0.00")
 		End Function
 	#tag EndMethod
 

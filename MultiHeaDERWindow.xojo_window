@@ -11,7 +11,7 @@ Begin DesktopWindow MultiHeaDERWindow
    HasMaximizeButton=   True
    HasMinimizeButton=   True
    HasTitleBar     =   True
-   Height          =   400
+   Height          =   638
    ImplicitInstance=   True
    MacProcID       =   0
    MaximumHeight   =   32000
@@ -24,7 +24,7 @@ Begin DesktopWindow MultiHeaDERWindow
    Title           =   "Untitled"
    Type            =   0
    Visible         =   True
-   Width           =   600
+   Width           =   872
 End
 #tag EndDesktopWindow
 

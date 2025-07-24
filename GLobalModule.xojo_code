@@ -10,6 +10,12 @@ Protected Module GLobalModule
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Function FormatToTwoDecimals(value As Double) As String
+		    Return Format(value, "##0.00")
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Function MaxValue(values() As Double) As Double
 		  // Public Function MaxValue(values() As Double) As Double

@@ -280,11 +280,11 @@ Begin DesktopWindow SingleHeaderWindow
       AllowAutoDeactivate=   True
       AllowTabStop    =   True
       Enabled         =   True
-      Height          =   478
+      Height          =   489
       Image           =   0
       Index           =   -2147483648
       InitialParent   =   ""
-      Left            =   420
+      Left            =   179
       LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
@@ -295,10 +295,10 @@ Begin DesktopWindow SingleHeaderWindow
       TabIndex        =   8
       TabPanelIndex   =   0
       Tooltip         =   ""
-      Top             =   54
+      Top             =   172
       Transparent     =   False
       Visible         =   True
-      Width           =   368
+      Width           =   565
       _mIndex         =   0
       _mInitialParent =   ""
       _mName          =   ""
@@ -327,7 +327,7 @@ Begin DesktopWindow SingleHeaderWindow
       HasHorizontalScrollbar=   False
       HasVerticalScrollbar=   True
       HeadingIndex    =   -1
-      Height          =   478
+      Height          =   150
       Index           =   -2147483648
       InitialValue    =   ""
       Italic          =   False
@@ -344,11 +344,11 @@ Begin DesktopWindow SingleHeaderWindow
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   54
+      Top             =   10
       Transparent     =   False
       Underline       =   False
       Visible         =   True
-      Width           =   228
+      Width           =   565
       _ScrollOffset   =   0
       _ScrollWidth    =   -1
    End
@@ -365,7 +365,7 @@ End
 
 	#tag Method, Flags = &h0
 		Sub DrawBoxplot(values() As Double, g As Graphics)
-		    // Implement boxplot logic here: median, IQR, whiskers
+		  // Implement boxplot logic here: median, IQR, whiskers
 		End Sub
 	#tag EndMethod
 
@@ -1006,6 +1006,14 @@ End
 		Group="Deprecated"
 		InitialValue="False"
 		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Header1"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="String"
 		EditorType=""
 	#tag EndViewProperty
 #tag EndViewBehavior

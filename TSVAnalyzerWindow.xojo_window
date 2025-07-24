@@ -60,7 +60,7 @@ Begin DesktopWindow TSVAnalyzerWindow
       AllowAutoDeactivate=   True
       Bold            =   False
       Cancel          =   False
-      Caption         =   "Process TSV"
+      Caption         =   "Analyse data"
       Default         =   False
       Enabled         =   True
       FontName        =   "System"

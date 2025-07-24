@@ -64,7 +64,7 @@ Begin DesktopWindow DualHeaderWindow
       TabPanelIndex   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   258
+      Top             =   241
       Transparent     =   False
       Underline       =   False
       Value           =   False
@@ -125,66 +125,16 @@ Begin DesktopWindow DualHeaderWindow
       _mName          =   ""
       _mPanelIndex    =   0
    End
-   Begin DesktopBevelButton HistogramBevelButton
-      Active          =   False
-      AllowAutoDeactivate=   True
-      AllowFocus      =   True
-      AllowTabStop    =   True
-      BackgroundColor =   &c00000000
-      BevelStyle      =   0
-      Bold            =   False
-      ButtonStyle     =   0
-      Caption         =   "Histogram"
-      CaptionAlignment=   3
-      CaptionDelta    =   0
-      CaptionPosition =   1
-      Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
-      HasBackgroundColor=   False
-      Height          =   22
-      Icon            =   0
-      IconAlignment   =   0
-      IconDeltaX      =   0
-      IconDeltaY      =   0
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   66
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      MenuStyle       =   0
-      PanelIndex      =   0
-      Scope           =   0
-      TabIndex        =   7
-      TabPanelIndex   =   0
-      TextColor       =   &c00000000
-      Tooltip         =   ""
-      Top             =   190
-      Transparent     =   False
-      Underline       =   False
-      Value           =   False
-      Visible         =   True
-      Width           =   101
-      _mIndex         =   0
-      _mInitialParent =   ""
-      _mName          =   ""
-      _mPanelIndex    =   0
-   End
    Begin DesktopImageViewer ImageViewer1
       Active          =   False
       AllowAutoDeactivate=   True
       AllowTabStop    =   True
       Enabled         =   True
-      Height          =   422
+      Height          =   538
       Image           =   0
       Index           =   -2147483648
       InitialParent   =   ""
-      Left            =   419
+      Left            =   197
       LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
@@ -195,10 +145,10 @@ Begin DesktopWindow DualHeaderWindow
       TabIndex        =   8
       TabPanelIndex   =   0
       Tooltip         =   ""
-      Top             =   20
+      Top             =   142
       Transparent     =   False
       Visible         =   True
-      Width           =   345
+      Width           =   587
       _mIndex         =   0
       _mInitialParent =   ""
       _mName          =   ""
@@ -227,7 +177,7 @@ Begin DesktopWindow DualHeaderWindow
       HasHorizontalScrollbar=   False
       HasVerticalScrollbar=   True
       HeadingIndex    =   -1
-      Height          =   422
+      Height          =   103
       Index           =   -2147483648
       InitialValue    =   ""
       Italic          =   False
@@ -248,11 +198,12 @@ Begin DesktopWindow DualHeaderWindow
       Transparent     =   False
       Underline       =   False
       Visible         =   True
-      Width           =   207
+      Width           =   594
       _ScrollOffset   =   0
       _ScrollWidth    =   -1
    End
    Begin DesktopBevelButton PB_BevelButton
+      Active          =   False
       AllowAutoDeactivate=   True
       AllowFocus      =   True
       AllowTabStop    =   True
@@ -284,19 +235,25 @@ Begin DesktopWindow DualHeaderWindow
       LockRight       =   False
       LockTop         =   True
       MenuStyle       =   0
+      PanelIndex      =   0
       Scope           =   0
       TabIndex        =   10
       TabPanelIndex   =   0
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   338
+      Top             =   342
       Transparent     =   False
       Underline       =   False
       Value           =   False
       Visible         =   True
       Width           =   138
+      _mIndex         =   0
+      _mInitialParent =   ""
+      _mName          =   ""
+      _mPanelIndex    =   0
    End
    Begin DesktopBevelButton JD_BevelButton1
+      Active          =   False
       AllowAutoDeactivate=   True
       AllowFocus      =   True
       AllowTabStop    =   True
@@ -328,6 +285,7 @@ Begin DesktopWindow DualHeaderWindow
       LockRight       =   False
       LockTop         =   True
       MenuStyle       =   0
+      PanelIndex      =   0
       Scope           =   0
       TabIndex        =   11
       TabPanelIndex   =   0
@@ -339,6 +297,10 @@ Begin DesktopWindow DualHeaderWindow
       Value           =   False
       Visible         =   True
       Width           =   138
+      _mIndex         =   0
+      _mInitialParent =   ""
+      _mName          =   ""
+      _mPanelIndex    =   0
    End
 End
 #tag EndDesktopWindow
@@ -1099,13 +1061,6 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events HistogramBevelButton
-	#tag Event
-		Sub Pressed()
-		  
-		End Sub
-	#tag EndEvent
-#tag EndEvents
 #tag Events PB_BevelButton
 	#tag Event
 		Sub Pressed()
@@ -1368,6 +1323,22 @@ End
 		Group="Deprecated"
 		InitialValue="False"
 		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="header1"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="String"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="header2"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="String"
 		EditorType=""
 	#tag EndViewProperty
 #tag EndViewBehavior

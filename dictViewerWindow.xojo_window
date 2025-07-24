@@ -173,56 +173,6 @@ Begin DesktopWindow dictViewerWindow
       _mName          =   ""
       _mPanelIndex    =   0
    End
-   Begin DesktopBevelButton CloseBevelButton1
-      Active          =   False
-      AllowAutoDeactivate=   True
-      AllowFocus      =   True
-      AllowTabStop    =   True
-      BackgroundColor =   &c00000000
-      BevelStyle      =   0
-      Bold            =   False
-      ButtonStyle     =   0
-      Caption         =   "🔙  Return"
-      CaptionAlignment=   3
-      CaptionDelta    =   0
-      CaptionPosition =   1
-      Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
-      HasBackgroundColor=   False
-      Height          =   22
-      Icon            =   0
-      IconAlignment   =   0
-      IconDeltaX      =   0
-      IconDeltaY      =   0
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   708
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      MenuStyle       =   0
-      PanelIndex      =   0
-      Scope           =   2
-      TabIndex        =   3
-      TabPanelIndex   =   0
-      TextColor       =   &c00000000
-      Tooltip         =   ""
-      Top             =   494
-      Transparent     =   False
-      Underline       =   False
-      Value           =   False
-      Visible         =   True
-      Width           =   87
-      _mIndex         =   0
-      _mInitialParent =   ""
-      _mName          =   ""
-      _mPanelIndex    =   0
-   End
 End
 #tag EndDesktopWindow
 
@@ -345,13 +295,6 @@ End
 	#tag Event
 		Sub Pressed()
 		  CopyDictionaryToClipboard()
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events CloseBevelButton1
-	#tag Event
-		Sub Pressed()
-		  self.close
 		End Sub
 	#tag EndEvent
 #tag EndEvents
