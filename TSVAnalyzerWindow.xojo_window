@@ -21,7 +21,7 @@ Begin DesktopWindow TSVAnalyzerWindow
    MinimumHeight   =   64
    MinimumWidth    =   64
    Resizeable      =   True
-   Title           =   "Untitled"
+   Title           =   "Statistis from .TSV"
    Type            =   0
    Visible         =   True
    Width           =   788
@@ -38,7 +38,7 @@ Begin DesktopWindow TSVAnalyzerWindow
       Height          =   20
       Index           =   -2147483648
       Italic          =   False
-      Left            =   54
+      Left            =   78
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
@@ -50,7 +50,7 @@ Begin DesktopWindow TSVAnalyzerWindow
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   394
+      Top             =   602
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -69,7 +69,7 @@ Begin DesktopWindow TSVAnalyzerWindow
       Height          =   20
       Index           =   -2147483648
       Italic          =   False
-      Left            =   271
+      Left            =   295
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
@@ -81,7 +81,7 @@ Begin DesktopWindow TSVAnalyzerWindow
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   394
+      Top             =   602
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -100,7 +100,7 @@ Begin DesktopWindow TSVAnalyzerWindow
       Height          =   20
       Index           =   -2147483648
       Italic          =   False
-      Left            =   506
+      Left            =   530
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
@@ -112,7 +112,7 @@ Begin DesktopWindow TSVAnalyzerWindow
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   394
+      Top             =   602
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -141,7 +141,7 @@ Begin DesktopWindow TSVAnalyzerWindow
       HasHorizontalScrollbar=   False
       HasVerticalScrollbar=   True
       HeadingIndex    =   -1
-      Height          =   200
+      Height          =   490
       Index           =   -2147483648
       InitialValue    =   ""
       Italic          =   False
@@ -152,7 +152,7 @@ Begin DesktopWindow TSVAnalyzerWindow
       LockRight       =   False
       LockTop         =   True
       RequiresSelection=   False
-      RowSelectionType=   0
+      RowSelectionType=   1
       Scope           =   2
       TabIndex        =   3
       TabPanelIndex   =   0
@@ -191,7 +191,7 @@ Begin DesktopWindow TSVAnalyzerWindow
       TextAlignment   =   0
       TextColor       =   &c000000
       Tooltip         =   ""
-      Top             =   253
+      Top             =   530
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -202,250 +202,72 @@ End
 
 #tag WindowCode
 	#tag Method, Flags = &h0
-		Sub Constructor()
-		  ReDim mHeaders(-1)
-		  ReDim mRawData(-1)
-		  mColumnData = New Dictionary
-		  mSelectedColumns = New Dictionary
+		Function DictionaryValue(v As Variant) As String
+		  '// Helper method to safely convert Variant to String array
+		  '//Private Function DictionaryValue(v As Variant) As String()
+		  'If v IsA String() Then
+		  'Return String()(v)
+		  'Else
+		  'Return New String()
+		  'End IfLoadTSVFile
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub LoadTSVFile()
+		  '
+		  '
+		  '//Sub LoadTSVFile()
+		  'Var file As FolderItem = GetOpenFolderItem("")
+		  'If file = Nil Then Return
+		  '
+		  'Var textInput As TextInputStream = TextInputStream.Open(file)
+		  'textInput.Encoding = Encodings.UTF8
+		  '
+		  'headers = textInput.ReadLine.Split(Chr(9)) // Read header line
+		  '
+		  'records.RemoveAll
+		  'While Not textInput.EOF
+		  'Var line As String = textInput.ReadLine.Trim
+		  'If line = "" Then Continue
+		  '
+		  'Var columns() As String = line.Split(Chr(9))
+		  'Var row As New Dictionary
+		  '
+		  'For i As Integer = 0 To headers.LastIndex
+		  'If i < columns.Count Then
+		  'row.Value(headers(i)) = columns(i)
+		  'End If
+		  'Next
+		  '
+		  'records.AddRow(row)
+		  'Wend
+		  '
+		  'textInput.Close
+		  '
+		  'HeaderListBox.RemoveAllRows
+		  'For Each header As String In headers
+		  'HeaderListBox.AddRow(header)
+		  'Next
+		  'LoadTSVFile
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Sub DataProcessed(columnCount As Integer, rowCount As Integer)
-		  // Event definition only - no implementation
-		End Sub
-	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Sub ErrorOccurred(message As String)
-		  // Event definition only - no implementation
-		End Sub
-	#tag EndMethod
+	#tag Property, Flags = &h0
+		dataLInes() As String
+	#tag EndProperty
 
-	#tag Method, Flags = &h0
-		Function ExportToSQLite(dbFile As FolderItem) As Boolean
-		  // [Existing implementation unchanged]
-		  Try
-		    Dim db As New SQLiteDatabase
-		    db.DatabaseFile = dbFile
-		    // ... (rest of the method remains the same)
-		  Catch err As RuntimeException
-		    MessageBox("Error creating SQLite database: " + err.Message)
-		    Return False
-		  End Try
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function GetAllColumnData() As Dictionary
-		  Return mColumnData
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function GetColumnData(columnName As String) As String()
-		  If mColumnData.HasKey(columnName) Then
-		    Return mColumnData.Value(columnName)
-		  Else
-		    Dim emptyArray() As String
-		    Return emptyArray
-		  End If
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function GetColumnStatistics(columnName As String) As Dictionary
-		  // [Existing implementation unchanged]
-		  Dim stats As New Dictionary
-		  Dim numericData() As Double = GetNumericColumnData(columnName)
-		  // ... (rest of the method remains the same)
-		  Return stats
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function GetNumericColumnData(columnName As String) As Double()
-		  Dim stringData() As String = GetColumnData(columnName)
-		  Dim numericData() As Double
-		  For Each value As String In stringData
-		    If IsNumeric(value) Then
-		      numericData.Append(Val(value))
-		    End If
-		  Next
-		  Return numericData
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function GetSelectedHeaders(listBox As DesktopListBox) As String()
-		  Dim selectedHeaders() As String
-		  For i As Integer = 0 To listBox.RowCount - 1
-		    If listBox.RowSelectedAt(i) Then
-		      selectedHeaders.Append(listBox.CellTextAt(i, 0))
-		    End If
-		  Next
-		  Return selectedHeaders
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub HeadersLoaded(headers() As String)
-		  // Event definition only - no implementation
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub LoadHeadersFromTSVFile(file As FolderItem, HeaderListBox As DesktopListBox)
-		  // Public Sub LoadHeadersFromTSVFile(file As FolderItem, HeaderListBox As DesktopListBox)
-		  If file = Nil Or Not file.Exists Then
-		    MessageBox("File not found.")
-		    Return
-		  End If
-		  
-		  Try
-		    Var tin As TextInputStream = TextInputStream.Open(file)
-		    tin.Encoding = Encodings.UTF8
-		    
-		    // Read the first line (header row)
-		    Var headerLine As String = tin.ReadLine
-		    Var headers() As String = headerLine.Split(Chr(9)) // Tab-separated
-		    
-		    // Clear the listbox and prepare it for single-column display
-		    HeaderListBox.RemoveAllRows
-		    HeaderListBox.ColumnCount = 1
-		    HeaderListBox.HasHeader = True
-		    HeaderListBox.HeaderAt(0) = "Column Headers"
-		    
-		    // Add each header to the listbox
-		    For Each header As String In headers
-		      HeaderListBox.AddRow(header)
-		    Next
-		    
-		    tin.Close
-		    
-		  Catch e As IOException
-		    MessageBox("Error reading the file: " + e.Message)
-		  End Try
-		  
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function LoadTSVFile(file As FolderItem) As Boolean
-		  If file = Nil Or Not file.Exists Then
-		    MessageBox("TSV file does not exist")
-		    Return False
-		  End If
-		  Try
-		    Dim input As TextInputStream = TextInputStream.Open(file)
-		    input.Encoding = Encodings.UTF8
-		    Dim allText As String = input.ReadAll
-		    input.Close
-		    Dim lines() As String = allText.Split(EndOfLine)
-		    If lines.Ubound < 1 Then
-		      MessageBox("File appears to be empty or has no data rows")
-		      Return False
-		    End If
-		    mHeaders = lines(0).Split(Chr(9))
-		    For i As Integer = 0 To mHeaders.Ubound
-		      mHeaders(i) = mHeaders(i).Trim
-		    Next
-		    ReDim mRawData(lines.Ubound - 1)
-		    For i As Integer = 1 To lines.Ubound
-		      mRawData(i - 1) = lines(i)
-		    Next
-		    mSelectedColumns.RemoveAll
-		    mColumnData.RemoveAll
-		    'MessageBox(mHeaders)
-		    Return True
-		  Catch err As RuntimeException
-		    MessageBox("Error reading TSV file: " + err.Message)
-		    Return False
-		  End Try
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function LoadTSVFromFolder(folder As FolderItem) As Boolean
-		  If folder = Nil Or Not folder.Exists Or Not folder.IsFolder Then
-		    MessageBox("Invalid folder specified")
-		    Return False
-		  End If
-		  Dim tsvFiles() As FolderItem
-		  For i As Integer = 1 To folder.Count
-		    Dim item As FolderItem = folder.Item(i)
-		    If item <> Nil And Not item.IsFolder Then
-		      Dim extension As String = item.Name
-		      If extension.Right(4).Uppercase = ".TSV" Then
-		        tsvFiles.Append(item)
-		      End If
-		    End If
-		  Next
-		  If tsvFiles.Ubound = -1 Then
-		    MessageBox("No TSV files found in the specified folder")
-		    Return False
-		  End If
-		  mTSVFile = tsvFiles(0)
-		  Return LoadTSVFile(mTSVFile)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub PopulateHeaderListBox(listBox As DesktopListBox)
-		  listBox.RemoveAllRows
-		  For i As Integer = 0 To mHeaders.Ubound
-		    listBox.AddRow(mHeaders(i))
-		  Next
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function ProcessSelectedColumns(selectedHeaders() As String) As Boolean
-		  If selectedHeaders.Ubound = -1 Then
-		    MessageBox("No columns selected")
-		    Return False
-		  End If
-		  mSelectedColumns.RemoveAll
-		  mColumnData.RemoveAll
-		  Dim columnIndices() As Integer
-		  For Each header As String In selectedHeaders
-		    For i As Integer = 0 To mHeaders.Ubound
-		      If mHeaders(i) = header Then
-		        columnIndices.Append(i)
-		        mSelectedColumns.Value(header) = i
-		        Exit For i
-		      End If
-		    Next
-		  Next
-		  For Each header As String In selectedHeaders
-		    If mSelectedColumns.HasKey(header) Then
-		      Dim columnIndex As Integer = mSelectedColumns.Value(header)
-		      Dim columnValues() As String
-		      For Each dataRow As String In mRawData
-		        If dataRow.Trim <> "" Then
-		          Dim rowValues() As String = dataRow.Split(Chr(9))
-		          If columnIndex <= rowValues.Ubound Then
-		            columnValues.Append(rowValues(columnIndex).Trim)
-		          Else
-		            columnValues.Append("")
-		          End If
-		        End If
-		      Next
-		      mColumnData.Value(header) = columnValues
-		    End If
-		  Next
-		  'MessageBox("dataProcessed: " + str(selectedHeaders.Ubound + 1), str( mRawData.Ubound + 1))
-		  Return True
-		End Function
-	#tag EndMethod
-
-
-	#tag Property, Flags = &h21
-		Private mColumnData As Dictionary
+	#tag Property, Flags = &h0
+		Headers() As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mHeaders() As String
+		Private mAllTSVData() As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mColumnData As Dictionary
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -456,8 +278,20 @@ End
 		Private mSelectedColumns As Dictionary
 	#tag EndProperty
 
+	#tag Property, Flags = &h0
+		mTSVData As Dictionary
+	#tag EndProperty
+
 	#tag Property, Flags = &h21
 		Private mTSVFile As FolderItem
+	#tag EndProperty
+
+	#tag Property, Flags = &h0
+		mTSVHeaders() As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h0
+		Records As Dictionary
 	#tag EndProperty
 
 
@@ -466,56 +300,137 @@ End
 #tag Events LoadButton
 	#tag Event
 		Sub Pressed()
-		  Var dlg As New OpenFileDialog
-		  dlg.Title = "Choose a TSV File"
-		  dlg.Filter = FileTypeGroup1.Text // You can define your own file type group
-		  dlg.InitialFolder = SpecialFolder.Documents
+		  Var textInput As TextInputStream
+		  Var file As FolderItem = GetOpenFolderItem("")
+		  'Var headers() As String
+		  'Var dataLines() As String
 		  
-		  Var f As FolderItem = dlg.ShowModal
-		  If f <> Nil Then
-		    LoadHeadersFromTSVFile(f, HeaderListBox)
+		  
+		  If file <> Nil Then
+		    textInput = TextInputStream.Open(file)
+		    textInput.Encoding = Encodings.UTF8
+		    
+		    // Read headers
+		    headers = textInput.ReadLine.Split(Chr(9))
+		    
+		    // Read remaining lines
+		    While Not textInput.EOF
+		      Var line As String = textInput.ReadLine.Trim
+		      If line <> "" Then
+		        dataLines.AddRow(line)
+		      End If
+		    Wend
+		    
+		    textInput.Close
 		  End If
+		  
+		  // Populate headers in the listbox
+		  HeaderListBox.RemoveAllRows
+		  For Each header As String In headers
+		    HeaderListBox.AddRow(header)
+		  Next
+		  
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events ProcessButton
 	#tag Event
 		Sub Pressed()
-		  Dim selectedHeaders() As String = GetSelectedHeaders(HeaderListBox)
-		  If Not ProcessSelectedColumns(selectedHeaders) Then
-		    // Error handled by ErrorHandler
+		  
+		  // Step 1: Validate data presence
+		  If headers = Nil Or dataLines = Nil Then
+		    MessageBox("No TSV data loaded.")
+		    Return
 		  End If
+		  
+		  // Step 2: Get selected headers
+		  Var selectedHeaders() As String
+		  For i As Integer = 0 To HeaderListBox.LastRowIndex
+		    If HeaderListBox.RowSelectedAt(i) Then
+		      selectedHeaders.AddRow(HeaderListBox.CellTextAt(i, 0))
+		    End If
+		  Next
+		  
+		  If selectedHeaders.Count = 0 Then
+		    MessageBox("Please select one or more headers.")
+		    Return
+		  End If
+		  
+		  // Step 3: Create records collection — list of row dictionaries
+		  Var selectedRecords() As Dictionary
+		  
+		  For Each line As String In dataLines
+		    Var columns() As String = line.Split(Chr(9)) // Tab-separated
+		    Var rowDict As New Dictionary
+		    
+		    For Each header As String In selectedHeaders
+		      Var idx As Integer = headers.IndexOf(header)
+		      System.DebugLog("Matching header: " + header + ", IndexOf result: " + headers.IndexOf(header).ToString)
+		      
+		      If idx >= 0 And idx < columns.Count Then
+		        rowDict.Value(header) = columns(idx)
+		      End If
+		    Next
+		    If rowDict.Count > 0 Then
+		      selectedRecords.AddRow(rowDict)
+		    End If
+		    
+		    selectedRecords.AddRow(rowDict)
+		  Next
+		  System.DebugLog("First data line: " + dataLines(0))
+		  System.DebugLog("selectedRecords.Count = " + selectedRecords.Count.ToString)
+		  System.DebugLog("dataLines.Count = " + dataLines.Count.ToString)
+		  
+		  
+		  // Step 4: Example – log contents for first few rows
+		  For i As Integer = 0 To Min(selectedRecords.LastIndex, 4)
+		    Var row As Dictionary = selectedRecords(i)
+		    Var rowIndexText As String = Str(i + 1)
+		    Var output As String = "Row " + rowIndexText + ": "
+		    
+		    
+		    For Each header As String In selectedHeaders
+		      Var value As String = row.Lookup(header, "")
+		      output = output + header + "=" + value + "  "
+		    Next
+		    
+		    System.DebugLog(output)
+		  Next
+		  
+		  MessageBox("Processed " + selectedRecords.Count.ToString + " rows with selected headers.")
+		  
+		  
+		  Select Case selectedHeaders.Count
+		  Case 1
+		    Var singleData() As String
+		    For Each row As Dictionary In selectedRecords
+		      singleData.AddRow(row.Lookup(selectedHeaders(0), ""))
+		    Next
+		    SingleHeaderWindow.SetData(singleData)
+		    SingleHeaderWindow.Show
+		    
+		  Case 2
+		    Var data1(), data2() As String
+		    For Each row As Dictionary In selectedRecords
+		      data1.AddRow(row.Lookup(selectedHeaders(0), ""))
+		      data2.AddRow(row.Lookup(selectedHeaders(1), ""))
+		    Next
+		    DualHeaderWindow.SetData(data1, data2)
+		    DualHeaderWindow.Show
+		    
+		  Case Is >= 3
+		    'MultiHeaderWindow.SetData(pieData)
+		    MultiHeaderWindow.Show
+		  End Select
+		  
+		  
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events ExportButton
 	#tag Event
 		Sub Pressed()
-		  Dim saveDialog As New SaveAsDialog
-		  saveDialog.SuggestedFileName = "tsv_data.sqlite"
-		  saveDialog.Filter = "SQLite Database (*.sqlite)|*.sqlite"
 		  
-		  Dim dbFile As FolderItem = saveDialog.ShowModal()
-		  If dbFile <> Nil Then
-		    If StatusLabel <> Nil Then
-		      StatusLabel.Text = "Exporting to SQLite database..."
-		    End If
-		    
-		    If ExportToSQLite(dbFile) Then
-		      If StatusLabel <> Nil Then
-		        StatusLabel.Text = "Successfully exported to SQLite database."
-		      End If
-		      
-		      Dim dialog As New MessageDialog
-		      Var b As MessageDialogButton 
-		      dialog.Icon = MessageDialog.GraphicNote
-		      dialog.ActionButton.Caption = "OK"
-		      dialog.Message = "Export Complete"
-		      dialog.Explanation = "Data has been successfully exported to: " + dbFile.NativePath
-		      b = dialog.ShowModal()
-		    End If
-		    // Error will be handled by ErrorHandler event if export fails
-		  End If
 		End Sub
 	#tag EndEvent
 #tag EndEvents
