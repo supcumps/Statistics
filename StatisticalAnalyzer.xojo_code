@@ -1172,7 +1172,7 @@ Protected Class StatisticalAnalyzer
 		    interpretationColor = Color.Green
 		  ElseIf rSquared > 0.90 And outlierCount <= (n * 0.10) Then
 		    normalityText = "ACCEPTABLE: Minor deviations from normality"
-		    interpretationColor = Color.Orange
+		    interpretationColor = Color.Purple
 		  Else
 		    normalityText = "NON-NORMAL: Significant deviations detected"
 		    interpretationColor = Color.Red
@@ -1574,7 +1574,7 @@ Protected Class StatisticalAnalyzer
 
 	#tag Method, Flags = &h21
 		Private Function FormatToTwoDecimals(value As Double) As String
-		    Return Format(value, "##0.00")
+		  Return Format(value, "##0.00")
 		End Function
 	#tag EndMethod
 

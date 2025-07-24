@@ -1,7 +1,7 @@
 #tag DesktopWindow
 Begin DesktopWindow SingleHeaderWindow
    Backdrop        =   0
-   BackgroundColor =   &cFFFFFF
+   BackgroundColor =   &cFFFFFF00
    Composite       =   False
    DefaultLocation =   2
    FullScreen      =   False
@@ -413,7 +413,7 @@ End
 		  Next
 		  
 		  // Draw curve
-		  g.DrawingColor = Color.RGB(160, 200, 255)
+		  g.DrawingColor = Color.RGB(0, 80, 237)
 		  For i As Integer = 1 To resolution
 		    Var px1 As Double = leftMargin + (curveX(i - 1) - minVal) / (maxVal - minVal) * plotWidth
 		    Var py1 As Double = h - bottomMargin - curveY(i - 1)
@@ -424,11 +424,11 @@ End
 		  
 		  // Draw mean line
 		  Var meanX As Double = leftMargin + (mean - minVal) / (maxVal - minVal) * plotWidth
-		  g.DrawingColor = Color.Blue
+		  g.DrawingColor = Color.Black
 		  g.DrawLine(meanX, topMargin, meanX, h - bottomMargin)
 		  
 		  // ±2SD lines
-		  g.DrawingColor = Color.Blue
+		  g.DrawingColor = Color.Black
 		  Var lowerX As Double = leftMargin + (mean - 2 * sd - minVal) / (maxVal - minVal) * plotWidth
 		  Var upperX As Double = leftMargin + (mean + 2 * sd - minVal) / (maxVal - minVal) * plotWidth
 		  g.DrawLine(lowerX, topMargin, lowerX, h - bottomMargin)
@@ -436,6 +436,8 @@ End
 		  
 		  // Summary text
 		  g.DrawingColor = Color.Black
+		  g.DrawString(header1, leftMargin, topMargin - 45)
+		  
 		  g.DrawString("Mean = " + Str(mean, "0.00"), leftMargin, topMargin - 25)
 		  g.DrawString("SD = " + Str(sd, "0.00") + "   Range: [" + Str(mean - 2 * sd, "0.00") + ", " + Str(mean + 2 * sd, "0.00") + "]", leftMargin, topMargin - 10)
 		  g.DrawString("Min = " + Str(minVal, "0.00") + ", Max = " + Str(maxVal, "0.00") + ", N = " + values.Count.ToString, leftMargin, h - 20)
@@ -534,12 +536,13 @@ End
 		  
 		  // 🧾 Annotate stats
 		  g.DrawingColor = Color.Black
-		  g.DrawString("Mean = " + Str(mean, "0.00") + ", SD = " + Str(sd, "0.00"), leftMargin, topMargin - 25)
-		  g.DrawString("±2 SD range: [" + Str(mean - 2 * sd, "0.00") + ", " + Str(mean + 2 * sd, "0.00") + "]", leftMargin, topMargin - 10)
-		  g.DrawString("Min = " + Str(minVal, "0.00") + ", Max = " + Str(maxVal, "0.00") + ", N = " + values.Count.ToString, leftMargin, h - 20)
+		  g.drawtext(header1, leftMargin+300, topMargin - 50)
+		  g.drawtext("Mean = " + Str(mean, "0.00") + ", SD = " + Str(sd, "0.00"), leftMargin, topMargin - 25)
+		  g.drawtext("±2 SD range: [" + Str(mean - 2 * sd, "0.00") + ", " + Str(mean + 2 * sd, "0.00") + "]", leftMargin, topMargin - 10)
+		  g.drawtext("Min = " + Str(minVal, "0.00") + ", Max = " + Str(maxVal, "0.00") + ", N = " + values.Count.ToString, leftMargin, h - 20)
 		  
-		  g.DrawString("Skewness = " + Str(skewness, "0.00") + ", Kurtosis = " + Str(kurtosis, "0.00"), leftMargin, topMargin - 40)
-		  g.DrawString("Mean = " + Str(mean, "0.00") + ", SD = " + Str(sd, "0.00") + ", ±2 SD: [" + Str(mean - 2 * sd, "0.00") + "–" + Str(mean + 2 * sd, "0.00") + "]", leftMargin, topMargin - 25)
+		  g.drawtext("Skewness = " + Str(skewness, "0.00") + ", Kurtosis = " + Str(kurtosis, "0.00"), leftMargin, topMargin - 40)
+		  g.drawtext("Mean = " + Str(mean, "0.00") + ", SD = " + Str(sd, "0.00") + ", ±2 SD: [" + Str(mean - 2 * sd, "0.00") + "–" + Str(mean + 2 * sd, "0.00") + "]", leftMargin, topMargin - 25)
 		  Var isSkewed As Boolean = Abs(skewness) > 1.0
 		  Var isKurtotic As Boolean = Abs(kurtosis) > 2.0
 		  Var nonNormalMsg As String = ""
@@ -564,7 +567,7 @@ End
 		  
 		  g.DrawingColor = msgColor
 		  g.FontSize = 13
-		  g.DrawString(nonNormalMsg, leftMargin, bottomMargin+20)
+		  g.drawtext(nonNormalMsg, leftMargin, bottomMargin+20)
 		  
 		End Sub
 	#tag EndMethod
@@ -696,7 +699,9 @@ End
 		  Var analyzer As New StatisticalAnalyzer
 		  
 		  
-		  Var boxPlot As Picture = analyzer.CreateBoxPlot(dataDoubles, "Sample Data")
+		  'Var boxPlot As Picture = analyzer.CreateBoxPlot(dataDoubles, "Sample Data")
+		  Var boxPlot As Picture = analyzer.CreateBoxPlot(dataDoubles, Header1)
+		  
 		  ImageViewer1.image = boxPlot
 		  
 		  // Create visualizations
@@ -715,7 +720,7 @@ End
 		  
 		  
 		  
-		  Var QQPlot As Picture = analyzer.CreateQQPlot(dataDoubles, "QQ Plot for Normality ", width,height)
+		  Var QQPlot As Picture = analyzer.CreateQQPlot(dataDoubles, "QQ Plot for Normality " + header1, width,height)
 		  ImageViewer1.Image = QQPlot
 		  
 		  
@@ -737,13 +742,9 @@ End
 		Sub Pressed()
 		  
 		  Var analyzer As New StatisticalAnalyzer
-		  'Var data1() As Double = Array(1.2, 2.3, 1.8, 2.1, 1.9, 2.4, 1.7, 2.2)
-		  'Var data2() As Double = Array(1.4, 1.3, 1.9, 3.1, 1.5, 2.0, 1.0, 2.20)
-		  
-		  
 		  
 		  Var statsDict As Dictionary = analyzer.DescriptiveStatistics(dataDoubles)
-		  dictViewerWindow.ShowDictionary(statsDict, "Summary Statistics")
+		  dictViewerWindow.ShowDictionary(statsDict, "Summary Statistics for " + header1)
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -1014,6 +1015,6 @@ End
 		Group="Behavior"
 		InitialValue=""
 		Type="String"
-		EditorType=""
+		EditorType="MultiLineEditor"
 	#tag EndViewProperty
 #tag EndViewBehavior

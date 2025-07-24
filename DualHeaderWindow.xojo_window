@@ -1021,7 +1021,7 @@ End
 		  Var analyzer As New StatisticalAnalyzer
 		  
 		  
-		  Var dualBoxPlot  As picture = analyzer.CreateDualBoxPlot(data1Doubles , data2Doubles, "2 Box Plots", "Plot 1","Plot 2", width, height)
+		  Var dualBoxPlot  As picture = analyzer.CreateDualBoxPlot(data1Doubles , data2Doubles, "2 Box Plots", header1,header2, width, height)
 		  ImageViewer1.Image = dualBoxPlot
 		End Sub
 	#tag EndEvent
@@ -1050,7 +1050,7 @@ End
 		  '
 		  'Var Bland_AltmanPlot As Picture = analyzer.CreateBlandAltmanPlot(data1Doubles,data2Doubles,"Bland-Altman Plot",width,height)
 		  'imageviewer1.image =  Bland_AltmanPlot
-		  Var plotImage As Picture = GenerateBlandAltmanImage(data1Doubles, data2Doubles, 1.96, "Method 1", "Method2")
+		  Var plotImage As Picture = GenerateBlandAltmanImage(data1Doubles, data2Doubles, 1.96, header1, header2)
 		  ImageViewer1.Image = plotImage
 		  
 		  
@@ -1064,7 +1064,7 @@ End
 #tag Events PB_BevelButton
 	#tag Event
 		Sub Pressed()
-		  Var plotImage As Picture = GeneratePassingBablokImage(data1Doubles, data2Doubles, "ACTpost", "ACTpre")
+		  Var plotImage As Picture = GeneratePassingBablokImage(data1Doubles, data2Doubles, header1, header2)
 		  ImageViewer1.Image = plotImage
 		  
 		End Sub
@@ -1073,7 +1073,7 @@ End
 #tag Events JD_BevelButton1
 	#tag Event
 		Sub Pressed()
-		  Var densityPlot As Picture = GenerateJointDensityImage(data1Doubles, data2Doubles, "Method 1", "Method 2")
+		  Var densityPlot As Picture = GenerateJointDensityImage(data1Doubles, data2Doubles,header1, header2)
 		  ImageViewer1.Image = densityPlot
 		  
 		  
@@ -1331,7 +1331,7 @@ End
 		Group="Behavior"
 		InitialValue=""
 		Type="String"
-		EditorType=""
+		EditorType="MultiLineEditor"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="header2"
@@ -1339,6 +1339,6 @@ End
 		Group="Behavior"
 		InitialValue=""
 		Type="String"
-		EditorType=""
+		EditorType="MultiLineEditor"
 	#tag EndViewProperty
 #tag EndViewBehavior

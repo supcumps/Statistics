@@ -123,7 +123,7 @@ Begin DesktopWindow dictViewerWindow
       _mName          =   ""
       _mPanelIndex    =   0
    End
-   Begin DesktopBevelButton BevelButton2
+   Begin DesktopBevelButton CipboardBevelButton
       Active          =   False
       AllowAutoDeactivate=   True
       AllowFocus      =   True
@@ -291,7 +291,7 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events BevelButton2
+#tag Events CipboardBevelButton
 	#tag Event
 		Sub Pressed()
 		  CopyDictionaryToClipboard()
