@@ -31,15 +31,9 @@ End
 #tag WindowCode
 	#tag Method, Flags = &h0
 		Sub SetData(pieData As Dictionary)
-		  ResultsListBox.HasHeading = True
 		  
-		  Var i As Integer = 0
-		  For Each key As Variant In columnData.Keys
-		    ResultsListBox.HeadingAt(i) = key.StringValue
-		    i = i + 1
-		  Next
 		  
-		  // continue building pie or summary
+		  
 		End Sub
 	#tag EndMethod
 

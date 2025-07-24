@@ -163,6 +163,7 @@ Begin DesktopWindow TSVAnalyzerWindow
       Underline       =   False
       Visible         =   True
       Width           =   748
+      _ScrollOffset   =   0
       _ScrollWidth    =   -1
    End
    Begin DesktopLabel StatusLabel
@@ -213,6 +214,22 @@ End
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Function ExtractValuesForHeaders(headersToExtract() As String, records() As Dictionary) As Dictionary
+		  Var result As New Dictionary
+		  
+		  For Each header As String In headersToExtract
+		    Var values() As String
+		    For Each row As Dictionary In records
+		      values.AddRow(row.Lookup(header, "")) // safely returns a String
+		    Next
+		    result.Value(header) = values // ✅ values is a String() array
+		  Next
+		  
+		  Return result
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Sub LoadTSVFile()
 		  '
@@ -250,6 +267,34 @@ End
 		  'HeaderListBox.AddRow(header)
 		  'Next
 		  'LoadTSVFile
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub RouteAnalysisWindow(selectedHeaders() As String, selectedRecords() As Dictionary)
+		  Var headerData As Dictionary = ExtractValuesForHeaders(selectedHeaders, selectedRecords)
+		  
+		  Select Case selectedHeaders.Count
+		  Case 1
+		    Var header As String = selectedHeaders(0)
+		    Var values() As String = headerData.Value(header)
+		    SingleHeaderWindow.SetData(header, values)
+		    SingleHeaderWindow.Show
+		    
+		  Case 2
+		    Var h1 As String = selectedHeaders(0)
+		    Var h2 As String = selectedHeaders(1)
+		    Var d1() As String = headerData.Value(h1)
+		    Var d2() As String = headerData.Value(h2)
+		    
+		    DualHeaderWindow.SetData(h1, d1, h2, d2)
+		    DualHeaderWindow.Show
+		    
+		  Case Is >= 3
+		    MultiHeaderWindow.SetData(headerData)
+		    MultiHeaderWindow.Show
+		  End Select
+		  
 		End Sub
 	#tag EndMethod
 
@@ -337,92 +382,58 @@ End
 	#tag Event
 		Sub Pressed()
 		  
-		  // Step 1: Validate data presence
-		  If headers = Nil Or dataLines = Nil Then
-		    MessageBox("No TSV data loaded.")
+		  // Validate that headers and data exist
+		  If headers.Count = 0 Then
+		    MessageBox("No headers found. Please load a valid TSV file first.")
 		    Return
 		  End If
 		  
-		  // Step 2: Get selected headers
+		  If dataLines.Count = 0 Then
+		    MessageBox("No data rows available for processing.")
+		    Return
+		  End If
+		  
+		  System.DebugLog("Selected Headers:")
+		  
+		  
+		  // Identify selected headers
 		  Var selectedHeaders() As String
 		  For i As Integer = 0 To HeaderListBox.LastRowIndex
 		    If HeaderListBox.RowSelectedAt(i) Then
 		      selectedHeaders.AddRow(HeaderListBox.CellTextAt(i, 0))
+		      System.DebugLog("Selected Headers:")
+		      For Each h As String In selectedHeaders
+		        System.DebugLog(h)
+		      Next
+		      
 		    End If
 		  Next
 		  
+		  
 		  If selectedHeaders.Count = 0 Then
-		    MessageBox("Please select one or more headers.")
+		    MessageBox("Please select at least one header to analyze.")
 		    Return
 		  End If
 		  
-		  // Step 3: Create records collection — list of row dictionaries
+		  // Build selectedRecords() from dataLines and headers
 		  Var selectedRecords() As Dictionary
-		  
 		  For Each line As String In dataLines
-		    Var columns() As String = line.Split(Chr(9)) // Tab-separated
-		    Var rowDict As New Dictionary
+		    Var rowData() As String = line.Split(Chr(9)) // Split by tab
 		    
-		    For Each header As String In selectedHeaders
-		      Var idx As Integer = headers.IndexOf(header)
-		      System.DebugLog("Matching header: " + header + ", IndexOf result: " + headers.IndexOf(header).ToString)
-		      
-		      If idx >= 0 And idx < columns.Count Then
-		        rowDict.Value(header) = columns(idx)
+		    Var rowDict As New Dictionary
+		    For j As Integer = 0 To headers.LastIndex
+		      If j <= rowData.LastIndex Then
+		        rowDict.Value(headers(j)) = rowData(j)
+		      Else
+		        rowDict.Value(headers(j)) = "" // Fill missing with blank
 		      End If
 		    Next
-		    If rowDict.Count > 0 Then
-		      selectedRecords.AddRow(rowDict)
-		    End If
 		    
 		    selectedRecords.AddRow(rowDict)
 		  Next
-		  System.DebugLog("First data line: " + dataLines(0))
-		  System.DebugLog("selectedRecords.Count = " + selectedRecords.Count.ToString)
-		  System.DebugLog("dataLines.Count = " + dataLines.Count.ToString)
 		  
-		  
-		  // Step 4: Example – log contents for first few rows
-		  For i As Integer = 0 To Min(selectedRecords.LastIndex, 4)
-		    Var row As Dictionary = selectedRecords(i)
-		    Var rowIndexText As String = Str(i + 1)
-		    Var output As String = "Row " + rowIndexText + ": "
-		    
-		    
-		    For Each header As String In selectedHeaders
-		      Var value As String = row.Lookup(header, "")
-		      output = output + header + "=" + value + "  "
-		    Next
-		    
-		    System.DebugLog(output)
-		  Next
-		  
-		  MessageBox("Processed " + selectedRecords.Count.ToString + " rows with selected headers.")
-		  
-		  
-		  Select Case selectedHeaders.Count
-		  Case 1
-		    Var singleData() As String
-		    For Each row As Dictionary In selectedRecords
-		      singleData.AddRow(row.Lookup(selectedHeaders(0), ""))
-		    Next
-		    SingleHeaderWindow.SetData(singleData)
-		    SingleHeaderWindow.Show
-		    
-		  Case 2
-		    Var data1(), data2() As String
-		    For Each row As Dictionary In selectedRecords
-		      data1.AddRow(row.Lookup(selectedHeaders(0), ""))
-		      data2.AddRow(row.Lookup(selectedHeaders(1), ""))
-		    Next
-		    DualHeaderWindow.SetData(data1, data2)
-		    DualHeaderWindow.Show
-		    
-		  Case Is >= 3
-		    'MultiHeaderWindow.SetData(pieData)
-		    MultiHeaderWindow.Show
-		  End Select
-		  
+		  // Call dispatcher to handle window routing
+		  RouteAnalysisWindow(selectedHeaders, selectedRecords)
 		  
 		End Sub
 	#tag EndEvent

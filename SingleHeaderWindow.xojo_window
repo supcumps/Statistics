@@ -382,13 +382,23 @@ End
 
 	#tag Method, Flags = &h0
 		Sub SetData(headerName As String, rawData() As String)
-		   ResultsListBox.HeadingAt(0) = "Header: " + CurrentHeaderName
-		  Self.dataStrings = rawData
-		  Var numericData() As Double
+		  
+		  Self.header1 = headerName
+		  
+		  Var filteredStrings() As String
+		  Var numericValues() As Double
+		  
 		  For Each s As String In rawData
-		    numericData.AddRow(Val(s))
+		    Var v As Double = Val(s)
+		    If s.Trim <> "" And v <> 0 Then
+		      filteredStrings.AddRow(s)
+		      numericValues.AddRow(v)
+		    End If
 		  Next
-		  Self.dataDoubles = numericData
+		  
+		  Self.dataStrings = filteredStrings
+		  Self.dataDoubles = numericValues
+		  
 		  RefreshResults()
 		End Sub
 	#tag EndMethod
@@ -431,6 +441,10 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h0
+		Header1 As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h0
 		rawdata() As String
 	#tag EndProperty
 
@@ -441,9 +455,6 @@ End
 	#tag Event
 		Sub Pressed()
 		  Var analyzer As New StatisticalAnalyzer
-		  'Var data() As Double = Array(1.2, 2.3, 1.8, 2.1, 1.9, 2.4, 1.7, 2.2)
-		  
-		  
 		  
 		  
 		  Var boxPlot As Picture = analyzer.CreateBoxPlot(dataDoubles, "Sample Data")

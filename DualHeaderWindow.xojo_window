@@ -25,56 +25,6 @@ Begin DesktopWindow DualHeaderWindow
    Type            =   0
    Visible         =   True
    Width           =   816
-   Begin DesktopBevelButton BoxPlotBevelButton
-      Active          =   False
-      AllowAutoDeactivate=   True
-      AllowFocus      =   True
-      AllowTabStop    =   True
-      BackgroundColor =   &c00000000
-      BevelStyle      =   0
-      Bold            =   False
-      ButtonStyle     =   0
-      Caption         =   "Boxplot"
-      CaptionAlignment=   3
-      CaptionDelta    =   0
-      CaptionPosition =   1
-      Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
-      HasBackgroundColor=   False
-      Height          =   22
-      Icon            =   0
-      IconAlignment   =   0
-      IconDeltaX      =   0
-      IconDeltaY      =   0
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   66
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      MenuStyle       =   0
-      PanelIndex      =   0
-      Scope           =   0
-      TabIndex        =   0
-      TabPanelIndex   =   0
-      TextColor       =   &c00000000
-      Tooltip         =   ""
-      Top             =   224
-      Transparent     =   False
-      Underline       =   False
-      Value           =   False
-      Visible         =   True
-      Width           =   101
-      _mIndex         =   0
-      _mInitialParent =   ""
-      _mName          =   ""
-      _mPanelIndex    =   0
-   End
    Begin DesktopBevelButton TwoBoxplotsBevelButton
       Active          =   False
       AllowAutoDeactivate=   True
@@ -175,156 +125,6 @@ Begin DesktopWindow DualHeaderWindow
       _mName          =   ""
       _mPanelIndex    =   0
    End
-   Begin DesktopBevelButton QQBevelButton
-      Active          =   False
-      AllowAutoDeactivate=   True
-      AllowFocus      =   True
-      AllowTabStop    =   True
-      BackgroundColor =   &c00000000
-      BevelStyle      =   0
-      Bold            =   False
-      ButtonStyle     =   0
-      Caption         =   "QQ Plot"
-      CaptionAlignment=   3
-      CaptionDelta    =   0
-      CaptionPosition =   1
-      Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
-      HasBackgroundColor=   False
-      Height          =   22
-      Icon            =   0
-      IconAlignment   =   0
-      IconDeltaX      =   0
-      IconDeltaY      =   0
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   66
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      MenuStyle       =   0
-      PanelIndex      =   0
-      Scope           =   0
-      TabIndex        =   3
-      TabPanelIndex   =   0
-      TextColor       =   &c00000000
-      Tooltip         =   ""
-      Top             =   122
-      Transparent     =   False
-      Underline       =   False
-      Value           =   False
-      Visible         =   True
-      Width           =   101
-      _mIndex         =   0
-      _mInitialParent =   ""
-      _mName          =   ""
-      _mPanelIndex    =   0
-   End
-   Begin DesktopBevelButton DistributionBevelButton
-      Active          =   False
-      AllowAutoDeactivate=   True
-      AllowFocus      =   True
-      AllowTabStop    =   True
-      BackgroundColor =   &c00000000
-      BevelStyle      =   0
-      Bold            =   False
-      ButtonStyle     =   0
-      Caption         =   "Plot distribution"
-      CaptionAlignment=   3
-      CaptionDelta    =   0
-      CaptionPosition =   1
-      Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
-      HasBackgroundColor=   False
-      Height          =   22
-      Icon            =   0
-      IconAlignment   =   0
-      IconDeltaX      =   0
-      IconDeltaY      =   0
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   66
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      MenuStyle       =   0
-      PanelIndex      =   0
-      Scope           =   0
-      TabIndex        =   4
-      TabPanelIndex   =   0
-      TextColor       =   &c00000000
-      Tooltip         =   ""
-      Top             =   88
-      Transparent     =   False
-      Underline       =   False
-      Value           =   False
-      Visible         =   True
-      Width           =   101
-      _mIndex         =   0
-      _mInitialParent =   ""
-      _mName          =   ""
-      _mPanelIndex    =   0
-   End
-   Begin DesktopBevelButton ScatterPlotBevelButton1
-      Active          =   False
-      AllowAutoDeactivate=   True
-      AllowFocus      =   True
-      AllowTabStop    =   True
-      BackgroundColor =   &c00000000
-      BevelStyle      =   0
-      Bold            =   False
-      ButtonStyle     =   0
-      Caption         =   "Scatter Plot"
-      CaptionAlignment=   3
-      CaptionDelta    =   0
-      CaptionPosition =   1
-      Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
-      HasBackgroundColor=   False
-      Height          =   22
-      Icon            =   0
-      IconAlignment   =   0
-      IconDeltaX      =   0
-      IconDeltaY      =   0
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   66
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      MenuStyle       =   0
-      PanelIndex      =   0
-      Scope           =   0
-      TabIndex        =   6
-      TabPanelIndex   =   0
-      TextColor       =   &c00000000
-      Tooltip         =   ""
-      Top             =   156
-      Transparent     =   False
-      Underline       =   False
-      Value           =   False
-      Visible         =   True
-      Width           =   101
-      _mIndex         =   0
-      _mInitialParent =   ""
-      _mName          =   ""
-      _mPanelIndex    =   0
-   End
    Begin DesktopBevelButton HistogramBevelButton
       Active          =   False
       AllowAutoDeactivate=   True
@@ -413,8 +213,8 @@ Begin DesktopWindow DualHeaderWindow
       AllowRowDragging=   False
       AllowRowReordering=   False
       Bold            =   False
-      ColumnCount     =   1
-      ColumnWidths    =   ""
+      ColumnCount     =   2
+      ColumnWidths    =   "50%,50%"
       DefaultRowHeight=   -1
       DropIndicatorVisible=   False
       Enabled         =   True
@@ -463,51 +263,274 @@ End
 	#tag EndEvent
 
 
-	#tag Method, Flags = &h21
-		Private Sub RefreshResults()
+	#tag Method, Flags = &h0
+		Sub DrawRobustBAPlot(a() As Double, b() As Double, z As Double = 1.96, methAlab As String = "Method A", methBlab As String = "Method B", g As Graphics)
 		  
-		  ResultsListBox.RemoveAllRows
-		  
-		  If data1Strings = Nil Or data2Strings = Nil Then
-		    ResultsListBox.AddRow("No data to display.")
-		    Return
-		  End If
-		  
-		  Var rowCount As Integer = Min(data1Strings.Count, data2Strings.Count)
-		  
-		  For i As Integer = 0 To rowCount - 1
-		    ResultsListBox.AddRow("Row " + Str(i + 1) + ": " + data1Strings(i) + " vs " + data2Strings(i))
+		  // Calculate x and y
+		  Var x(), y() As Double
+		  For i As Integer = 0 To Min(a.LastIndex, b.LastIndex)
+		    x.AddRow((a(i) + b(i)) / 2.0)
+		    y.AddRow(a(i) - b(i))
 		  Next
 		  
+		  // Compute robust metrics
+		  Var median_diff As Double = Median(y)
+		  Var mad As Double = MedianAbsoluteDeviation(y, median_diff)
+		  Var lower_l As Double = median_diff - z * (mad / 0.6745)
+		  Var upper_l As Double = median_diff + z * (mad / 0.6745)
+		  
+		  // Regression
+		  Var slope, intercept, rSquared, sdResidual As Double
+		  LinearRegression(x, y, slope, intercept, rSquared, sdResidual)
+		  
+		  // Canvas dimensions
+		  Var w As Double = g.Width
+		  Var h As Double = g.Height
+		  
+		  // Plot margins
+		  Var leftMargin As Double = 80
+		  Var bottomMargin As Double = 60
+		  Var topMargin As Double = 100
+		  Var rightMargin As Double = 40
+		  
+		  Var plotWidth As Double = w - leftMargin - rightMargin
+		  Var plotHeight As Double = h - topMargin - bottomMargin
+		  
+		  // Determine scaling
+		  Var minX As Double = MinValue(x)
+		  Var maxX As Double = MaxValue(x)
+		  Var minY As Double = Min(MinValue(y), lower_l) - 5
+		  Var maxY As Double = Max(MaxValue(y), upper_l) + 5
+		  
+		  // Helper: map data to canvas
+		  Var MapX As Double = plotWidth / (maxX - minX)
+		  Var MapY As Double = plotHeight / (maxY - minY)
+		  
+		  // Draw axes
+		  g.DrawLine(leftMargin, h - bottomMargin, w - rightMargin, h - bottomMargin)
+		  g.DrawLine(leftMargin, topMargin, leftMargin, h - bottomMargin)
+		  
+		  // Draw data points
+		  For i As Integer = 0 To x.LastIndex
+		    Var px As Double = leftMargin + (x(i) - minX) * MapX
+		    Var py As Double = h - bottomMargin - (y(i) - minY) * MapY
+		    g.FillOval(px - 3, py - 3, 6, 6)
+		  Next
+		  
+		  // Draw robust bias and limits
+		  Var medianY As Double = h - bottomMargin - (median_diff - minY) * MapY
+		  Var lowerY As Double = h - bottomMargin - (lower_l - minY) * MapY
+		  Var upperY As Double = h - bottomMargin - (upper_l - minY) * MapY
+		  
+		  g.DrawLine(leftMargin, medianY, w - rightMargin, medianY) // bias
+		  g.PenSize = 1
+		  g.DrawLine(leftMargin, lowerY, w - rightMargin, lowerY)
+		  g.DrawLine(leftMargin, upperY, w - rightMargin, upperY)
+		  
+		  // Regression line
+		  For xVal As Double = minX To maxX Step (maxX - minX) / 50
+		    Var yVal As Double = slope * xVal + intercept
+		    Var px As Double = leftMargin + (xVal - minX) * MapX
+		    Var py As Double = h - bottomMargin - (yVal - minY) * MapY
+		    If xVal = minX Then
+		      g.PenSize = 2
+		      g.DrawingColor = Color.Blue
+		    End If
+		    If xVal = maxX Then
+		      g.DrawLine(leftMargin + (minX - minX) * MapX, h - bottomMargin - ((slope * minX + intercept) - minY) * MapY, px, py)
+		    End If
+		  Next
+		  
+		  // Parallel ±2SD lines
+		  For offset As Double = -2 * sdResidual To 2 * sdResidual Step 4 * sdResidual
+		    Var shiftedIntercept As Double = intercept + offset
+		    Var yStart As Double = slope * minX + shiftedIntercept
+		    Var yEnd As Double = slope * maxX + shiftedIntercept
+		    Var py1 As Double = h - bottomMargin - (yStart - minY) * MapY
+		    Var py2 As Double = h - bottomMargin - (yEnd - minY) * MapY
+		    g.DrawingColor = Color.Blueg.DrawLine(leftMargin, py1, w - rightMargin, py2)
+		  Next
+		  
+		  // Stats and title
+		  Var label As String = "y = " + Str(intercept, "0.00") + " + " + Str(slope, "0.00") + "x, R² = " + Str(rSquared, "0.000")
+		  g.DrawString(label, leftMargin, topMargin - 10)
+		  
+		  g.DrawString("Robust Bland-Altman Plot", leftMargin, 30)
+		  g.DrawString("Bias = " + Str(median_diff, "0.00") + ", MAD = " + Str(mad, "0.00"), leftMargin, 50)
+		  g.DrawString("Limits: " + Str(lower_l, "0.00") + " to " + Str(upper_l, "0.00") + " (±" + Str(z) + " × MAD / 0.6745)", leftMargin, 70)
+		  g.DrawString("Median of " + methAlab + " and " + methBlab, leftMargin, h - 20)
+		  g.DrawString(methAlab + " - " + methBlab, 10, topMargin + plotHeight / 2)
+		  
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GenerateBlandAltmanImage(a() As Double, b() As Double, z As Double = 1.96, methAlab As String = "Method A", methBlab As String = "Method B") As Picture
+		  Var img As New Picture(800, 600)
+		  DrawRobustBAPlot(a, b, z, methAlab, methBlab, img.Graphics)
+		  Return img
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub LinearRegression(x() As Double, y() As Double, ByRef slope As Double, ByRef intercept As Double, ByRef rSquared As Double, ByRef sdResidual As Double)
+		  
+		  Var n As Double = Min(x.Count, y.Count)
+		  If n = 0 Then Return
+		  
+		  Var sumX, sumY, sumXY, sumX2, sumY2 As Double
+		  For i As Integer = 0 To n - 1
+		    sumX = sumX + x(i)
+		    sumY = sumY + y(i)
+		    sumXY = sumXY + x(i) * y(i)
+		    sumX2 = sumX2 + x(i) * x(i)
+		    sumY2 = sumY2 + y(i) * y(i)
+		  Next
+		  
+		  slope = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX)
+		  intercept = (sumY - slope * sumX) / n
+		  
+		  // Compute residuals for SD
+		  Var residuals() As Double
+		  For i As Integer = 0 To n - 1
+		    Var predicted As Double = slope * x(i) + intercept
+		    residuals.AddRow(y(i) - predicted)
+		  Next
+		  
+		  // SD of residuals
+		  Var meanResidual As Double = residuals.Average
+		  Var sumSq As Double
+		  For Each r As Double In residuals
+		    sumSq = sumSq + (r - meanResidual) ^ 2
+		  Next
+		  sdResidual = Sqrt(sumSq / (residuals.Count - 1))
+		  
+		  // R²
+		  rSquared = ((n * sumXY - sumX * sumY) ^ 2) / ((n * sumX2 - sumX ^ 2) * (n * sumY2 - sumY ^ 2))
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function MaxValue(values() As Double) As Double
+		  // Public Function MaxValue(values() As Double) As Double
+		  If values.Count = 0 Then Return 0
+		  Var result As Double = values(0)
+		  For Each v As Double In values
+		    If v > result Then result = v
+		  Next
+		  Return result
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Median(values() As Double) As Double
+		  If values.Count = 0 Then Return 0
+		  
+		  Var sorted() As Double = values.Sort
+		  Var Mid As Integer = sorted.Count \ 2
+		  
+		  If sorted.Count Mod 2 = 0 Then
+		    Return (sorted(Mid - 1) + sorted(Mid)) / 2.0
+		  Else
+		    Return sorted(Mid)
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function MedianAbsoluteDeviation(values() As Double, center As Double) As Double
+		  Var deviations() As Double
+		  For Each v As Double In values
+		    deviations.AddRow(Abs(v - center))
+		  Next
+		  Return Median(deviations)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function MinValue(values() As Double) As Double
+		  If values.Count = 0 Then Return 0
+		  Var result As Double = values(0)
+		  For Each v As Double In values
+		    If v < result Then result = v
+		  Next
+		  Return result
+		  
+		  
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub RefreshResults()
+		  ResultsListBox.RemoveAllRows
+		  ResultsListBox.HasHeader = True
+		  ResultsListBox.ColumnCount = 3
+		  
+		  ResultsListBox.HeaderAt(0) = header1
+		  ResultsListBox.HeaderAt(1) = header2
+		  ResultsListBox.HeaderAt(2) = "ΔACT"
+		  System.DebugLog("Header 0: " + ResultsListBox.HeaderAt(0))
+		  System.DebugLog("Header 1: " + ResultsListBox.HeaderAt(1))
+		  System.DebugLog("Header 1: " + ResultsListBox.HeaderAt(2))
+		  Var rowCount As Integer = Min(data1Doubles.Count, data2Doubles.Count)
+		  
+		  For i As Integer = 0 To rowCount - 1
+		    Var v1 As Double = data1Doubles(i)
+		    Var v2 As Double = data2Doubles(i)
+		    Var delta As Double = v1 - v2
+		    
+		    ResultsListBox.AddRow("")
+		    ResultsListBox.CellTextAt(i, 0) = Format(v1, "#,###")
+		    ResultsListBox.CellTextAt(i, 1) = Format(v2, "#,###")
+		    ResultsListBox.CellTextAt(i, 2) = Format(delta, "#,###")
+		  Next
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub SetData(header1 As String, rawData1() As String, header2 As String, rawData2() As String)
 		  
-		  ResultsListBox.HeadingAt(0) = header1
-		  ResultsListBox.HeadingAt(1) = header2
+		  Self.header1 = header1
+		  Self.header2 = header2
 		  
-		  // Convert to Double arrays
-		  Var numericData1() As Double
-		  Var numericData2() As Double
+		  Var filteredStrings1(), filteredStrings2() As String
+		  Var numericData1(), numericData2() As Double
 		  
-		  For Each s As String In rawData1
-		    numericData1.AddRow(Val(s))
+		  // Only include valid paired values
+		  For i As Integer = 0 To Min(rawData1.LastIndex, rawData2.LastIndex)
+		    Var s1 As String = rawData1(i)
+		    Var s2 As String = rawData2(i)
+		    
+		    Var v1 As Double = Val(s1)
+		    Var v2 As Double = Val(s2)
+		    
+		    If s1.Trim <> "" And s2.Trim <> "" And v1 <> 0 And v2 <> 0 Then
+		      filteredStrings1.AddRow(s1)
+		      filteredStrings2.AddRow(s2)
+		      numericData1.AddRow(v1)
+		      numericData2.AddRow(v2)
+		    End If
 		  Next
 		  
-		  For Each s As String In rawData2
-		    numericData2.AddRow(Val(s))
-		  Next
-		  
-		  // Store both string and numeric versions
-		  Self.data1Strings = rawData1
-		  Self.data2Strings = rawData2
+		  Self.data1Strings = filteredStrings1
+		  Self.data2Strings = filteredStrings2
 		  Self.data1Doubles = numericData1
 		  Self.data2Doubles = numericData2
 		  
-		  // Refresh visual display
 		  RefreshResults()
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Untitled()
+		  Var total As Double
+		  For Each v As Double In residuals
+		    total = total + v
+		  Next
+		  
+		  Var meanResidual As Double = total / residuals.Count
 		  
 		End Sub
 	#tag EndMethod
@@ -557,26 +580,17 @@ End
 		data2Strings() As String
 	#tag EndProperty
 
+	#tag Property, Flags = &h0
+		header1 As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h0
+		header2 As String
+	#tag EndProperty
+
 
 #tag EndWindowCode
 
-#tag Events BoxPlotBevelButton
-	#tag Event
-		Sub Pressed()
-		  Var analyzer As New StatisticalAnalyzer
-		  Var data() As Double = Array(1.2, 2.3, 1.8, 2.1, 1.9, 2.4, 1.7, 2.2)
-		  
-		  
-		  
-		  
-		  Var boxPlot As Picture = analyzer.CreateBoxPlot(data1Doubles, "Sample Data")
-		  ImageViewer1.image = boxPlot
-		  
-		  // Create visualizations
-		  
-		End Sub
-	#tag EndEvent
-#tag EndEvents
 #tag Events TwoBoxplotsBevelButton
 	#tag Event
 		Sub Pressed()
@@ -591,76 +605,32 @@ End
 #tag Events BA_BevelButton
 	#tag Event
 		Sub Pressed()
-		  Var analyzer As New StatisticalAnalyzer
-		  Var data() As Double = Array(1.2, 2.3, 1.8, 2.1, 1.9, 2.4, 1.7, 2.2)
-		  Var data2() As Double = Array(1.4, 1.3, 1.9, 3.1, 1.5, 2.0, 1.0, 2.20)
-		  
-		  // Descriptive statistics
-		  Var stats As Dictionary = analyzer.DescriptiveStatistics(data)
-		  
-		  // Test for normality
-		  Var normalityTest As Dictionary = analyzer.AndersonDarlingTest(data)
-		  
-		  // Create visualizations
-		  
-		  
-		  
-		  
-		  
-		  
-		  'Var qqPlot As Picture = analyzer.CreateQQPlot(data2, "Normality Check",width,height)
-		  'ImageViewer1.Image = qqPlot
-		  
-		  Var Bland_AltmanPlot As Picture = analyzer.CreateBlandAltmanPlot(data,data2,"Bland-Altman Plot",width,height)
-		  imageviewer1.image =  Bland_AltmanPlot
-		  
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events QQBevelButton
-	#tag Event
-		Sub Pressed()
-		  //Function CreateQQPlot(data() As Double, title As String, width As Integer, height As Integer) As Picture
-		  Var analyzer As New StatisticalAnalyzer
-		  Var data1() As Double = Array(1.2, 2.3, 1.8, 2.1, 1.9, 2.4, 1.7, 2.2)
-		  Var data2() As Double = Array(1.4, 1.3, 1.9, 3.1, 1.5, 2.0, 1.0, 2.20)
+		  'Var analyzer As New StatisticalAnalyzer
+		  '
+		  '
+		  ''// Descriptive statistics
+		  ''Var stats As Dictionary = analyzer.DescriptiveStatistics(data)
+		  ''
+		  ''// Test for normality
+		  ''Var normalityTest As Dictionary = analyzer.AndersonDarlingTest(data)
+		  ''
+		  ''// Create visualizations
+		  '
+		  '
+		  '
+		  '
+		  '
+		  '
+		  ''Var qqPlot As Picture = analyzer.CreateQQPlot(data2, "Normality Check",width,height)
+		  ''ImageViewer1.Image = qqPlot
+		  '
+		  'Var Bland_AltmanPlot As Picture = analyzer.CreateBlandAltmanPlot(data1Doubles,data2Doubles,"Bland-Altman Plot",width,height)
+		  'imageviewer1.image =  Bland_AltmanPlot
+		  Var plotImage As Picture = GenerateBlandAltmanImage(data1Doubles, data2Doubles, 1.96, "Method 1", "Method2")
+		  ImageViewer1.Image = plotImage
 		  
 		  
 		  
-		  
-		  Var QQPlot As Picture = analyzer.CreateQQPlot(data2, "QQ Plot for Normality ", width,height)
-		  ImageViewer1.Image = QQPlot
-		  
-		  
-		  
-		  
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events DistributionBevelButton
-	#tag Event
-		Sub Pressed()
-		  Var analyzer As New StatisticalAnalyzer
-		  Var data() As Double = data1Doubles
-		  
-		  
-		  Var distributionPlot As Picture = analyzer.CreateDistributionPlot(data, "normal",width,height)
-		  ImageViewer1.image = distributionPlot
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events ScatterPlotBevelButton1
-	#tag Event
-		Sub Pressed()
-		  Var analyzer As New StatisticalAnalyzer
-		  Var data1() As Double = Array(1.2, 2.3, 1.8, 2.1, 1.9, 2.4, 1.7, 2.2)
-		  Var data2() As Double = Array(1.4, 1.3, 1.9, 3.1, 1.5, 2.0, 1.0, 2.20)
-		  
-		  
-		  //xData() As Double, yData() As Double, width As Integer, height As Integer, showRegression As Boolean = True, title as String, xLabel as String, yLabel as String
-		  
-		  Var scatterplot As Picture = analyzer.CreateScatterPlot(data1, data2,width,height,TRUE,"Scatter Plot ", "data1","data2") 
-		  ImageViewer1.Image = scatterplot
 		  
 		  
 		  
