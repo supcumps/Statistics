@@ -4,7 +4,7 @@
 This project was developed to read a tab-separated file (.TSV) and display the (first) header line on a table 
 so that numeric fields could be chosen for statistical analysis and display. Different statistical metrics are 
 displayed for a single choice, a choice of two columns or multiple field displays.
-
+	
 This Xojo project contains the following components:
 
 ### Project Components
@@ -172,7 +172,7 @@ None
 
 ## Usage
 
-[Add specific usage instructions for your application]
+Load a tab-separated file that has columns labelled in the first line.
 
 ## Contributing
 
@@ -183,7 +183,26 @@ None
 
 ## License
 
-[Specify your license here]
+MIT License
 
+Copyright (c) 2025 Philip Cumpston
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
 ---
 *This README was automatically generated from the Xojo project file on 14/7/2025*

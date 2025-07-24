@@ -699,12 +699,11 @@ End
 		  Var analyzer As New StatisticalAnalyzer
 		  
 		  
-		  'Var boxPlot As Picture = analyzer.CreateBoxPlot(dataDoubles, "Sample Data")
 		  Var boxPlot As Picture = analyzer.CreateBoxPlot(dataDoubles, Header1)
 		  
 		  ImageViewer1.image = boxPlot
 		  
-		  // Create visualizations
+		  
 		  
 		End Sub
 	#tag EndEvent
