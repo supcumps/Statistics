@@ -143,7 +143,7 @@ Begin DesktopWindow TSVAnalyzerWindow
       HeadingIndex    =   -1
       Height          =   490
       Index           =   -2147483648
-      InitialValue    =   ""
+      InitialValue    =   "Application for selecting  and analysing data from a .TSV file"
       Italic          =   False
       Left            =   20
       LockBottom      =   False

@@ -125,7 +125,7 @@ Begin DesktopWindow SingleHeaderWindow
       _mName          =   ""
       _mPanelIndex    =   0
    End
-   Begin DesktopBevelButton DistributionBevelButton
+   Begin DesktopBevelButton densityPlotBevelButton
       Active          =   False
       AllowAutoDeactivate=   True
       AllowFocus      =   True
@@ -134,7 +134,7 @@ Begin DesktopWindow SingleHeaderWindow
       BevelStyle      =   0
       Bold            =   False
       ButtonStyle     =   0
-      Caption         =   "Plot distribution"
+      Caption         =   "Show Density Plot"
       CaptionAlignment=   3
       CaptionDelta    =   0
       CaptionPosition =   1
@@ -151,7 +151,7 @@ Begin DesktopWindow SingleHeaderWindow
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
-      Left            =   66
+      Left            =   35
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
@@ -169,7 +169,7 @@ Begin DesktopWindow SingleHeaderWindow
       Underline       =   False
       Value           =   False
       Visible         =   True
-      Width           =   101
+      Width           =   132
       _mIndex         =   0
       _mInitialParent =   ""
       _mName          =   ""
@@ -364,9 +364,248 @@ End
 
 
 	#tag Method, Flags = &h0
+		Sub DrawBoxplot(values() As Double, g As Graphics)
+		    // Implement boxplot logic here: median, IQR, whiskers
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub DrawDensityPlot(values() As Double, g As Graphics)
+		  
+		  If values.Count < 2 Then Return // Need at least 2 points to model
+		  
+		  // Canvas layout
+		  Var w As Double = g.Width
+		  Var h As Double = g.Height
+		  Var leftMargin As Double = 60
+		  Var rightMargin As Double = 40
+		  Var topMargin As Double = 60
+		  Var bottomMargin As Double = 60
+		  Var plotWidth As Double = w - leftMargin - rightMargin
+		  Var plotHeight As Double = h - topMargin - bottomMargin
+		  
+		  // Stats
+		  Var mean As Double = Average(values)
+		  Var sd As Double = StandardDeviation(values)
+		  Var minVal As Double = MinValue(values)
+		  Var maxVal As Double = MaxValue(values)
+		  
+		  // Density curve using Gaussian bump method
+		  Var resolution As Integer = 200
+		  Var curveX(), curveY() As Double
+		  
+		  For i As Integer = 0 To resolution
+		    Var xVal As Double = minVal + (maxVal - minVal) * i / resolution
+		    Var density As Double = 0
+		    For Each v As Double In values
+		      Var z As Double = (xVal - v) / sd
+		      density = density + Exp(-0.5 * z * z)
+		    Next
+		    density = density / (values.Count * sd * Sqrt(2 * Pi))// Normalization
+		    curveX.AddRow(xVal)
+		    curveY.AddRow(density)
+		  Next
+		  
+		  // Normalize Y to fit canvas
+		  Var maxY As Double = MaxValue(curveY)
+		  For i As Integer = 0 To resolution
+		    curveY(i) = curveY(i) / maxY * plotHeight
+		  Next
+		  
+		  // Draw curve
+		  g.DrawingColor = Color.RGB(160, 200, 255)
+		  For i As Integer = 1 To resolution
+		    Var px1 As Double = leftMargin + (curveX(i - 1) - minVal) / (maxVal - minVal) * plotWidth
+		    Var py1 As Double = h - bottomMargin - curveY(i - 1)
+		    Var px2 As Double = leftMargin + (curveX(i) - minVal) / (maxVal - minVal) * plotWidth
+		    Var py2 As Double = h - bottomMargin - curveY(i)
+		    g.DrawLine(px1, py1, px2, py2)
+		  Next
+		  
+		  // Draw mean line
+		  Var meanX As Double = leftMargin + (mean - minVal) / (maxVal - minVal) * plotWidth
+		  g.DrawingColor = Color.Blue
+		  g.DrawLine(meanX, topMargin, meanX, h - bottomMargin)
+		  
+		  // ±2SD lines
+		  g.DrawingColor = Color.Blue
+		  Var lowerX As Double = leftMargin + (mean - 2 * sd - minVal) / (maxVal - minVal) * plotWidth
+		  Var upperX As Double = leftMargin + (mean + 2 * sd - minVal) / (maxVal - minVal) * plotWidth
+		  g.DrawLine(lowerX, topMargin, lowerX, h - bottomMargin)
+		  g.DrawLine(upperX, topMargin, upperX, h - bottomMargin)
+		  
+		  // Summary text
+		  g.DrawingColor = Color.Black
+		  g.DrawString("Mean = " + Str(mean, "0.00"), leftMargin, topMargin - 25)
+		  g.DrawString("SD = " + Str(sd, "0.00") + "   Range: [" + Str(mean - 2 * sd, "0.00") + ", " + Str(mean + 2 * sd, "0.00") + "]", leftMargin, topMargin - 10)
+		  g.DrawString("Min = " + Str(minVal, "0.00") + ", Max = " + Str(maxVal, "0.00") + ", N = " + values.Count.ToString, leftMargin, h - 20)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub DrawHistogram(values() As Double, g As Graphics)
+		  If values.Count = 0 Then Return
+		  Var mean As Double = Average(values)
+		  Var sd As Double = StandardDeviation(values)
+		  
+		  Var skewness As Double = 0
+		  Var kurtosis As Double = 0
+		  
+		  For Each v As Double In values
+		    Var z As Double = (v - mean) / sd
+		    skewness = skewness + z^3
+		    kurtosis = kurtosis + z^4
+		  Next
+		  
+		  skewness = skewness / values.Count
+		  kurtosis = kurtosis / values.Count - 3 // Excess kurtosis
+		  
+		  
+		  // Canvas dimensions
+		  Var w As Double = g.Width
+		  Var h As Double = g.Height
+		  Var leftMargin As Double = 60
+		  Var rightMargin As Double = 40
+		  Var topMargin As Double = 60
+		  Var bottomMargin As Double = 60
+		  Var plotWidth As Double = w - leftMargin - rightMargin
+		  Var plotHeight As Double = h - topMargin - bottomMargin
+		  
+		  // Compute stats
+		  mean  = Average(values)
+		  sd  = StandardDeviation(values)
+		  Var minVal As Double = MinValue(values)
+		  Var maxVal As Double = MaxValue(values)
+		  
+		  // Bin setup
+		  Var binCount As Integer = 20
+		  Var bins() As Integer
+		  bins.ResizeTo(binCount - 1)
+		  
+		  For Each v As Double In values
+		    Var binIndex As Integer = Floor((v - minVal) / (maxVal - minVal) * binCount)
+		    If binIndex >= 0 And binIndex <= binCount - 1 Then bins(binIndex) = bins(binIndex) + 1
+		  Next
+		  
+		  Var maxBinCount As Integer = MaxValueInt(bins)
+		  
+		  // 🟦 Draw histogram bars
+		  For i As Integer = 0 To binCount - 1
+		    Var binX As Double = leftMargin + (i / binCount) * plotWidth
+		    Var binWidth As Double = plotWidth / binCount
+		    Var binHeight As Double = plotHeight * bins(i) / maxBinCount
+		    
+		    g.DrawingColor = Color.RGB(180, 220, 255)
+		    g.FillRectangle(binX, h - bottomMargin - binHeight, binWidth, binHeight)
+		  Next
+		  // Normal curve fit overlay
+		  Var resolution As Integer = 200
+		  g.DrawingColor = Color.RGB(255, 100, 100) // Light red
+		  
+		  Var normYMax As Double = 1.0 / (sd * Sqrt(2 * Pi))
+		  For i As Integer = 1 To resolution
+		    Var x1 As Double = minVal + (maxVal - minVal) * (i - 1) / resolution
+		    Var x2 As Double = minVal + (maxVal - minVal) * i / resolution
+		    Var z1 As Double = (x1 - mean) / sd
+		    Var z2 As Double = (x2 - mean) / sd
+		    Var y1 As Double = Exp(-0.5 * z1^2) / (sd * Sqrt(2 * Pi))
+		    Var y2 As Double = Exp(-0.5 * z2^2) / (sd * Sqrt(2 * Pi))
+		    y1 = y1 / normYMax * plotHeight
+		    y2 = y2 / normYMax * plotHeight
+		    
+		    Var px1 As Double = leftMargin + (x1 - minVal) / (maxVal - minVal) * plotWidth
+		    Var px2 As Double = leftMargin + (x2 - minVal) / (maxVal - minVal) * plotWidth
+		    Var py1 As Double = h - bottomMargin - y1
+		    Var py2 As Double = h - bottomMargin - y2
+		    g.DrawLine(px1, py1, px2, py2)
+		  Next
+		  
+		  // 📏 Draw mean and ±2SD lines
+		  Var meanX As Double = leftMargin + (mean - minVal) / (maxVal - minVal) * plotWidth
+		  Var lowerX As Double = leftMargin + (mean - 2 * sd - minVal) / (maxVal - minVal) * plotWidth
+		  Var upperX As Double = leftMargin + (mean + 2 * sd - minVal) / (maxVal - minVal) * plotWidth
+		  
+		  g.DrawingColor = Color.Blue
+		  g.DrawLine(meanX, topMargin, meanX, h - bottomMargin)
+		  
+		  g.DrawingColor = Color.Blue
+		  g.DrawLine(lowerX, topMargin, lowerX, h - bottomMargin)
+		  g.DrawLine(upperX, topMargin, upperX, h - bottomMargin)
+		  
+		  // 🧾 Annotate stats
+		  g.DrawingColor = Color.Black
+		  g.DrawString("Mean = " + Str(mean, "0.00") + ", SD = " + Str(sd, "0.00"), leftMargin, topMargin - 25)
+		  g.DrawString("±2 SD range: [" + Str(mean - 2 * sd, "0.00") + ", " + Str(mean + 2 * sd, "0.00") + "]", leftMargin, topMargin - 10)
+		  g.DrawString("Min = " + Str(minVal, "0.00") + ", Max = " + Str(maxVal, "0.00") + ", N = " + values.Count.ToString, leftMargin, h - 20)
+		  
+		  g.DrawString("Skewness = " + Str(skewness, "0.00") + ", Kurtosis = " + Str(kurtosis, "0.00"), leftMargin, topMargin - 40)
+		  g.DrawString("Mean = " + Str(mean, "0.00") + ", SD = " + Str(sd, "0.00") + ", ±2 SD: [" + Str(mean - 2 * sd, "0.00") + "–" + Str(mean + 2 * sd, "0.00") + "]", leftMargin, topMargin - 25)
+		  Var isSkewed As Boolean = Abs(skewness) > 1.0
+		  Var isKurtotic As Boolean = Abs(kurtosis) > 2.0
+		  Var nonNormalMsg As String = ""
+		  
+		  If isSkewed And isKurtotic Then
+		    nonNormalMsg = "⚠️ Distribution is non-normal: high skew and kurtosis"
+		  ElseIf isSkewed Then
+		    nonNormalMsg = "⚠️ Distribution is non-normal: significant skew"
+		  ElseIf isKurtotic Then
+		    nonNormalMsg = "⚠️ Distribution is non-normal: excessive kurtosis"
+		  Else
+		    nonNormalMsg = "✅ Distribution appears approximately normal"
+		  End If
+		  
+		  // draw the result on the image
+		  Var bgWidth As Double = g.StringWidth(nonNormalMsg) + 10
+		  Var msgColor As Color = If(Left(nonNormalMsg, 1) = "⚠", Color.Red, Color.Blue)
+		  Var bgColor As Color = If(Left(nonNormalMsg, 1) = "⚠", Color.RGB(255, 220, 220), Color.RGB(220, 255, 220))
+		  
+		  g.DrawingColor = bgColor
+		  g.FillRectangle(leftMargin - 5, topMargin - 90, bgWidth, 20)
+		  
+		  g.DrawingColor = msgColor
+		  g.FontSize = 13
+		  g.DrawString(nonNormalMsg, leftMargin, bottomMargin+20)
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GenerateBoxplotImage(values() As Double) As Picture
+		  //Public Function GenerateBoxplotImage(values() As Double) As Picture
+		  Var img As New Picture(800, 600)
+		  DrawBoxplot(values, img.Graphics)
+		  Return img
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GenerateDensityImage(values() As Double) As Picture
+		  //Public Function GenerateDensityImage(values() As Double) As Picture
+		  Var img As New Picture(800, 600)
+		  DrawDensityPlot(values, img.Graphics)
+		  Return img
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GenerateHistogramImage(values() As Double) As Picture
+		  //Public Function GenerateHistogramImage(values() As Double) As Picture
+		  Var img As New Picture(800, 600)
+		  DrawHistogram(values, img.Graphics)
+		  Return img
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub RefreshResults()
 		  
 		  ResultsListBox.RemoveAllRows
+		  ResultsListBox.RemoveAllRows
+		  ResultsListBox.ColumnCount = 1
+		  ResultsListBox.HeaderAt(0) = header1
 		  
 		  If dataStrings = Nil Or dataStrings.Count = 0 Then
 		    ResultsListBox.AddRow("No data to display.")
@@ -485,15 +724,11 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events DistributionBevelButton
+#tag Events densityPlotBevelButton
 	#tag Event
 		Sub Pressed()
-		  Var analyzer As New StatisticalAnalyzer
-		  'Var data() As Double = Array(1.2, 2.3, 1.8, 2.1, 1.9, 2.4, 1.7, 2.2)
+		  ImageViewer1.Image = GenerateDensityImage(dataDoubles)
 		  
-		  
-		  Var distributionPlot As Picture = analyzer.CreateDistributionPlot(dataDoubles, "normal",width,height)
-		  ImageViewer1.image = distributionPlot
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -522,8 +757,8 @@ End
 		  
 		  
 		  
-		  Var histogram As Picture = analyzer.CreateHistogram(dataDoubles, "Frequency Distribution", 10)
-		  ImageViewer1.Image = histogram
+		  ImageViewer1.Image = GenerateHistogramImage(dataDoubles)
+		  
 		  
 		  
 		End Sub
