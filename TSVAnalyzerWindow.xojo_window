@@ -38,7 +38,7 @@ Begin DesktopWindow TSVAnalyzerWindow
       Height          =   20
       Index           =   -2147483648
       Italic          =   False
-      Left            =   78
+      Left            =   69
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
@@ -50,7 +50,7 @@ Begin DesktopWindow TSVAnalyzerWindow
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   602
+      Top             =   606
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -69,7 +69,7 @@ Begin DesktopWindow TSVAnalyzerWindow
       Height          =   20
       Index           =   -2147483648
       Italic          =   False
-      Left            =   295
+      Left            =   377
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
@@ -81,7 +81,7 @@ Begin DesktopWindow TSVAnalyzerWindow
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   602
+      Top             =   606
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -112,7 +112,7 @@ Begin DesktopWindow TSVAnalyzerWindow
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   602
+      Top             =   606
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -143,7 +143,7 @@ Begin DesktopWindow TSVAnalyzerWindow
       HeadingIndex    =   -1
       Height          =   490
       Index           =   -2147483648
-      InitialValue    =   "Application for selecting  and analysing data from a .TSV file"
+      InitialValue    =   "To select more than one header onMac: Hold ⌘ (Command) while clicking rows and on Windows/Linux: Hold Ctrl while clicking rows."
       Italic          =   False
       Left            =   20
       LockBottom      =   False
@@ -198,6 +198,50 @@ Begin DesktopWindow TSVAnalyzerWindow
       Visible         =   True
       Width           =   388
    End
+   Begin DesktopBevelButton ClearBevelButton
+      AllowAutoDeactivate=   True
+      AllowFocus      =   True
+      AllowTabStop    =   True
+      BackgroundColor =   &c00000000
+      BevelStyle      =   0
+      Bold            =   False
+      ButtonStyle     =   0
+      Caption         =   "Clear Selection"
+      CaptionAlignment=   3
+      CaptionDelta    =   0
+      CaptionPosition =   1
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      HasBackgroundColor=   False
+      Height          =   22
+      Icon            =   0
+      IconAlignment   =   0
+      IconDeltaX      =   0
+      IconDeltaY      =   0
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   204
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      MenuStyle       =   0
+      Scope           =   0
+      TabIndex        =   5
+      TabPanelIndex   =   0
+      TextColor       =   &c00000000
+      Tooltip         =   ""
+      Top             =   604
+      Transparent     =   False
+      Underline       =   False
+      Value           =   False
+      Visible         =   True
+      Width           =   118
+   End
 End
 #tag EndDesktopWindow
 
@@ -227,6 +271,62 @@ End
 		  Next
 		  
 		  Return result
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetSelectedColumnsAsDictionary(selectedHeaders() As String, headerArray() As String, dataArray() As Variant) As Dictionary
+		  Var resultDict As New Dictionary
+		  
+		  // Loop through each selected header
+		  For Each selectedHeader As String In selectedHeaders
+		    Var headerIndex As Integer = headerArray.IndexOf(selectedHeader)
+		    Var columnValues() As Variant
+		    
+		    // If the header exists in the full header list
+		    If headerIndex >= 0 Then
+		      // For each row, extract the value at the matching header index
+		      For Each row As Variant In dataArray
+		        // Ensure the row is treated as an array
+		        Var rowArray() As Variant = row
+		        If headerIndex < rowArray.Count Then
+		          columnValues.AddRow(rowArray(headerIndex))
+		        End If
+		      Next
+		      
+		      // Add header-to-values mapping to the dictionary
+		      resultDict.Value(selectedHeader) = columnValues
+		    End If
+		  Next
+		  
+		  Return resultDict
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetSelectedHeaders(headerListBox As DesktopListBox) As String()
+		  '
+		  'TSVAnalyzerWindow
+		  '└── GetSelectedHeaders() → String()
+		  '└── User selects headers via checkboxes
+		  '└── Extracts checked header names
+		  '
+		  '└── GetSelectedColumnsAsDictionary(headersArray, dataArray) → Dictionary
+		  '└── Maps header names To corresponding column values
+		  '
+		  '└── RouteAnalysisWindow()
+		  '└── Instantiates MultiselectWindow
+		  '└── Passes dictionary via ReceiveColumns()
+		  '
+		  
+		  Var selectedHeaders() As String
+		  
+		  Var rowIndex As Integer = headerListBox.SelectedRowIndex
+		  If rowIndex >= 0 Then
+		    selectedHeaders.AddRow(headerListBox.CellTextAt(rowIndex, 0))
+		  End If
+		  
+		  Return selectedHeaders
 		End Function
 	#tag EndMethod
 
@@ -291,9 +391,13 @@ End
 		    DualHeaderWindow.Show
 		    
 		  Case Is >= 3
-		    MultiHeaderWindow.SetData(headerData)
-		    MultiHeaderWindow.Show
+		    
+		    // Pass dictionary and headers array to MultiHeaderWindow
+		    Var multiWin As New MultiHeaderWindow
+		    multiWin.SetData(selectedHeaders, headerData)
+		    multiWin.Show
 		  End Select
+		  
 		  
 		End Sub
 	#tag EndMethod
@@ -435,12 +539,24 @@ End
 		  // Call dispatcher to handle window routing
 		  RouteAnalysisWindow(selectedHeaders, selectedRecords)
 		  
+		  
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events ExportButton
 	#tag Event
 		Sub Pressed()
+		  
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events ClearBevelButton
+	#tag Event
+		Sub Pressed()
+		  For i As Integer = 0 To HeaderListBox.LastRowIndex
+		    HeaderListBox.CellCheckBoxValueAt(i, 0) = False
+		  Next
+		  StatusLabel.Text = "Selected headers: 0"
 		  
 		End Sub
 	#tag EndEvent
