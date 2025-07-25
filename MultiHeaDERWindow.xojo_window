@@ -211,12 +211,17 @@ End
 		    g.DrawingColor = Color.HSV(hue, 0.7, 0.9)
 		    g.FillPath(path, True)
 		    
-		    // Slice label
+		    // Compute slice label with total and percentage
+		    Var percent As Double = value / total * 100.0
+		    Var label As String = header + " (" + Format(value, "#.##") + ", " + Format(percent, "#.0") + "%)"
+		    
+		    // Label position
 		    Var midAngle As Double = startAngle + sweep / 2.0
 		    Var lx As Integer = Round(cx + Cos(midAngle * Pi / 180.0) * radius * 0.6)
 		    Var ly As Integer = Round(cy + Sin(midAngle * Pi / 180.0) * radius * 0.6)
 		    g.DrawingColor = Color.Black
-		    g.DrawText(header, lx - 15, ly, 50)
+		    g.DrawText(label, lx - 15, ly, 100) // Extend width if needed
+		    
 		    
 		    startAngle = startAngle + sweep
 		  Next
