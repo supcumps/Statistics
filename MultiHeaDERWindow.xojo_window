@@ -208,7 +208,10 @@ End
 		    
 		    // Set drawing color and fill the slice
 		    Var hue As Double = i / headers.Count
-		    g.DrawingColor = Color.HSV(hue, 0.7, 0.9)
+		     Var baseColor As Color = Color.HSV(hue, 0.7, 0.9)
+		    Var fadedColor As Color = Color.RGBA(baseColor.Red, baseColor.Green, baseColor.Blue, 128) // semi-transparent
+		    
+		    g.DrawingColor = fadedColor
 		    g.FillPath(path, True)
 		    
 		    // Compute slice label with total and percentage
@@ -276,7 +279,7 @@ End
 		  
 		  headerData = Data
 		  headers =  headerNames
-		  messagebox("listbox completed")
+		  ' messagebox("listbox completed")
 		End Sub
 	#tag EndMethod
 
