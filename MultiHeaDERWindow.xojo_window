@@ -152,6 +152,56 @@ Begin DesktopWindow MultiHeaderWindow
       _ScrollOffset   =   0
       _ScrollWidth    =   -1
    End
+   Begin DesktopBevelButton PieBevelButton1
+      Active          =   False
+      AllowAutoDeactivate=   True
+      AllowFocus      =   True
+      AllowTabStop    =   True
+      BackgroundColor =   &c00000000
+      BevelStyle      =   0
+      Bold            =   False
+      ButtonStyle     =   0
+      Caption         =   "Spider Plot"
+      CaptionAlignment=   3
+      CaptionDelta    =   0
+      CaptionPosition =   1
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      HasBackgroundColor=   False
+      Height          =   22
+      Icon            =   0
+      IconAlignment   =   0
+      IconDeltaX      =   0
+      IconDeltaY      =   0
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   7
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      MenuStyle       =   0
+      PanelIndex      =   0
+      Scope           =   0
+      TabIndex        =   10
+      TabPanelIndex   =   0
+      TextColor       =   &c00000000
+      Tooltip         =   ""
+      Top             =   275
+      Transparent     =   False
+      Underline       =   False
+      Value           =   False
+      Visible         =   True
+      Width           =   160
+      _mIndex         =   0
+      _mInitialParent =   ""
+      _mName          =   ""
+      _mPanelIndex    =   0
+   End
 End
 #tag EndDesktopWindow
 
@@ -165,7 +215,7 @@ End
 
 	#tag Method, Flags = &h0
 		Function CreatePieChartImage(headers() As String, valuesDict As Dictionary, radius As Double) As Picture
-		  Var picSize As Integer = radius * 2
+		  Var picSize As Integer = radius * 2 +200
 		  Var chartPic As New Picture(picSize, picSize)
 		  Var g As Graphics = chartPic.Graphics
 		  
@@ -208,7 +258,7 @@ End
 		    
 		    // Set drawing color and fill the slice
 		    Var hue As Double = i / headers.Count
-		     Var baseColor As Color = Color.HSV(hue, 0.7, 0.9)
+		    Var baseColor As Color = Color.HSV(hue, 0.7, 0.9)
 		    Var fadedColor As Color = Color.RGBA(baseColor.Red, baseColor.Green, baseColor.Blue, 128) // semi-transparent
 		    
 		    g.DrawingColor = fadedColor
@@ -227,6 +277,119 @@ End
 		    
 		    
 		    startAngle = startAngle + sweep
+		  Next
+		  
+		  Return chartPic
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function CreateSpiderPlot(headers() As String, headerData As Dictionary, radius As Integer) As Picture
+		  Var dimCount As Integer = headers.Count
+		  If dimCount = 0 Then Return Nil
+		  
+		  Var picSize As Integer = radius * 2 +200
+		  Var cx As Integer = picSize / 2
+		  Var cy As Integer = picSize / 2
+		  Var chartPic As New Picture(picSize, picSize)
+		  Var g As Graphics = chartPic.Graphics
+		  
+		  // Normalize values and capture min/max
+		  Var values() As Double
+		  Var maxVal As Double = -1
+		  Var minVal As Double = -1
+		  Var minIdx, maxIdx As Integer
+		  
+		  For i As Integer = 0 To headers.LastIndex
+		    Var key As String = headers(i)
+		    Var Val As Double = headerData.Lookup(key, 0).TypeDouble
+		    values.Add(Val)
+		    
+		    If Val > maxVal Or maxVal = -1 Then
+		      maxVal = Val
+		      maxIdx = i
+		    End If
+		    If Val < minVal Or minVal = -1 Then
+		      minVal = Val
+		      minIdx = i
+		    End If
+		  Next
+		  
+		  For i As Integer = 0 To values.LastIndex
+		    If maxVal > 0 Then values(i) = values(i) / maxVal
+		  Next
+		  
+		  // 🔘 Concentric rings with labels
+		  Var ringCount As Integer = 5
+		  g.DrawingColor = Color.DarkGray
+		  g.PenWidth = 1.0
+		  
+		  For rLevel As Integer = 1 To ringCount
+		    Var r As Integer = radius * rLevel / ringCount
+		    g.DrawOval(cx - r, cy - r, r * 2, r * 2)
+		    
+		    Var labelVal As Double = rLevel * maxVal / ringCount
+		    g.DrawingColor = Color.Purple
+		    g.DrawText(Str(labelVal, "#.##"), cx + r + 6, cy - 6)
+		  Next
+		  
+		  // 🧭 Radial gridlines + offset header labels
+		  Var labelOffset As Integer = 40
+		  For i As Integer = 0 To dimCount - 1
+		    Var angle As Double = i / dimCount * 2.0 * Pi
+		    Var axX As Integer = Round(cx + Cos(angle) * radius)
+		    Var axY As Integer = Round(cy + Sin(angle) * radius)
+		    g.DrawingColor = Color.Gray
+		    g.DrawLine(cx, cy, axX, axY)
+		    
+		    Var labelX As Integer = Round(cx + Cos(angle) * (radius + labelOffset))
+		    Var labelY As Integer = Round(cy + Sin(angle) * (radius + labelOffset))
+		    g.DrawingColor = Color.Black
+		    'g.DrawText(headers(i), labelX - 20, labelY, 80)
+		    g.DrawText(headers(i), labelX - 20, labelY,120 ) // Width: 80px, Height: single-line
+		    
+		    
+		  Next
+		  
+		  // 🕷️ Build radar path
+		  Var path As New GraphicsPath
+		  Var startX, startY As Integer
+		  
+		  For i As Integer = 0 To dimCount - 1
+		    Var angle As Double = i / dimCount * 2.0 * Pi
+		    Var r As Double = values(i) * radius * 0.95
+		    Var x As Integer = Round(cx + Cos(angle) * r)
+		    Var y As Integer = Round(cx + Sin(angle) * r)
+		    
+		    If i = 0 Then
+		      path.MoveToPoint(x, y)
+		      startX = x
+		      startY = y
+		    Else
+		      path.AddLineToPoint(x, y)
+		    End If
+		  Next
+		  path.AddLineToPoint(startX, startY)
+		  
+		  // ✨ Fill and outline radar shape
+		  Var FillColor As Color = Color.RGBA(30, 144, 255, 128)
+		  g.DrawingColor = FillColor
+		  g.FillPath(path, True)
+		  
+		  g.DrawingColor = Color.RGBA(30, 144, 255, 255)
+		  g.DrawPath(path)
+		  
+		  // 📍 Min/Max markers with outline
+		  For Each idx As Integer In Array(minIdx, maxIdx)
+		    Var angle As Double = idx / dimCount * 2.0 * Pi
+		    Var r As Double = values(idx) * radius * 0.95
+		    Var mx As Integer = Round(cx + Cos(angle) * r)
+		    Var my As Integer = Round(cy + Sin(angle) * r)
+		    
+		    g.DrawingColor = If(idx = minIdx, Color.Red, Color.Green)
+		    g.FillOval(mx - 6, my - 6, 12, 12)
+		    g.DrawingColor = If(idx = minIdx, Color.Black, Color.White)
+		    g.DrawOval(mx - 6, my - 6, 12, 12)
 		  Next
 		  
 		  Return chartPic
@@ -334,6 +497,15 @@ End
 		Sub Pressed()
 		  
 		  ImageViewer1.Image = CreatePieChartImage(headers, headerData, 100)
+		  
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events PieBevelButton1
+	#tag Event
+		Sub Pressed()
+		  
+		  ImageViewer1.Image = CreateSpiderPlot(headers, headerData, 100)
 		  
 		End Sub
 	#tag EndEvent
