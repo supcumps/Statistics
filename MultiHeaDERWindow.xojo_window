@@ -202,6 +202,56 @@ Begin DesktopWindow MultiHeaderWindow
       _mName          =   ""
       _mPanelIndex    =   0
    End
+   Begin DesktopBevelButton SPMatrixButton
+      Active          =   False
+      AllowAutoDeactivate=   True
+      AllowFocus      =   True
+      AllowTabStop    =   True
+      BackgroundColor =   &c00000000
+      BevelStyle      =   0
+      Bold            =   False
+      ButtonStyle     =   0
+      Caption         =   "Scatterplot Matrix"
+      CaptionAlignment=   3
+      CaptionDelta    =   0
+      CaptionPosition =   1
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      HasBackgroundColor=   False
+      Height          =   22
+      Icon            =   0
+      IconAlignment   =   0
+      IconDeltaX      =   0
+      IconDeltaY      =   0
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   7
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      MenuStyle       =   0
+      PanelIndex      =   0
+      Scope           =   0
+      TabIndex        =   11
+      TabPanelIndex   =   0
+      TextColor       =   &c00000000
+      Tooltip         =   ""
+      Top             =   309
+      Transparent     =   False
+      Underline       =   False
+      Value           =   False
+      Visible         =   True
+      Width           =   160
+      _mIndex         =   0
+      _mInitialParent =   ""
+      _mName          =   ""
+      _mPanelIndex    =   0
+   End
 End
 #tag EndDesktopWindow
 
@@ -212,6 +262,23 @@ End
 		End Sub
 	#tag EndEvent
 
+
+	#tag Method, Flags = &h0
+		Function ConvertToDoubles(dataDict As Dictionary, key As String) As Double()
+		  Var result() As Double
+		  If dataDict.HasKey(KEY) Then
+		    Var rawValues() As String = dataDict.Value(key)
+		    For Each Val As String In rawValues
+		      Try
+		        result.Add(CDbl(Val.Trim))
+		      Catch
+		        ' Skip invalid
+		      End Try
+		    Next
+		  End If
+		  Return result
+		End Function
+	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function CreatePieChartImage(headers() As String, valuesDict As Dictionary, radius As Double) As Picture
@@ -280,6 +347,59 @@ End
 		  Next
 		  
 		  Return chartPic
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function CreateScatterplotMatrix(headers() as String, dataDict as Dictionary, cellsize as Integer = 100) As Picture
+		  Var labelWidth As Integer = 150
+		  Var labelHeight As Integer = 20
+		  Var matrixSize As Integer = headers.Count * cellSize
+		  Var picWidth As Integer = matrixSize + labelWidth + 10
+		  Var picHeight As Integer = matrixSize + labelHeight + 30
+		  
+		  Var pic As New Picture(picWidth, picHeight)
+		  Var g As Graphics = pic.Graphics
+		  
+		  For row As Integer = 0 To headers.LastIndex
+		    For col As Integer = 0 To headers.LastIndex
+		      Var xLabel As String = headers(col)
+		      Var yLabel As String = headers(row)
+		      
+		      Var xVals() As Double = ConvertToDoubles(dataDict, xLabel)
+		      Var yVals() As Double = ConvertToDoubles(dataDict, yLabel)
+		      
+		      Var cellLeft As Integer = col * cellSize + labelWidth
+		      Var cellTop As Integer = row * cellSize + labelHeight
+		      Var bounds As New Rect(cellLeft, cellTop, cellSize, cellSize)
+		      
+		      If xVals.Count > 0 And yVals.Count > 0 Then
+		        DrawScatterCell(g, xVals, yVals, bounds)
+		      Else
+		        DrawDiagnosticOverlay(g, "n/a", bounds)
+		      End If
+		      
+		      g.DrawRect(bounds.Left, bounds.Top, bounds.Width, bounds.Height)
+		      DrawColumnTicks(g, bounds, 20)
+		      DrawRowTicks(g, bounds, 20)
+		      
+		      If row = headers.LastIndex Then
+		        Var xLabelX As Integer = bounds.Left + bounds.Width / 2 - g.TextWidth(xLabel) / 2
+		        Var xLabelY As Integer = bounds.Bottom + 15
+		        g.Bold = True
+		        g.DrawString(xLabel, xLabelX, xLabelY)
+		      End If
+		      
+		      If col = 0 Then
+		        Var yLabelX As Integer = bounds.Left - g.TextWidth(yLabel) - 12
+		        Var yLabelY As Integer = bounds.Top + bounds.Height / 2 + g.TextHeight / 2
+		        g.Bold = True
+		        g.DrawString(yLabel, yLabelX, yLabelY)
+		      End If
+		    Next
+		  Next
+		  
+		  Return pic
 		End Function
 	#tag EndMethod
 
@@ -397,6 +517,122 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub DrawColumnTicks(g As Graphics, bounds As Rect, spacing As Integer)
+		  For i As Integer = 0 To bounds.Width Step spacing
+		    Var x As Integer = bounds.Left + i
+		    g.DrawLine(x, bounds.Bottom, x, bounds.Bottom + 5)
+		  Next
+		  End Sub
+		  
+		  Sub DrawRowTicks(g As Graphics, bounds As Rect, spacing As Integer)
+		    For i As Integer = 0 To bounds.Height Step spacing
+		      Var y As Integer = bounds.Top + i
+		      g.DrawLine(bounds.Left - 5, y, bounds.Left, y)
+		    Next
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub DrawDiagnosticOverlay(g As Graphics, message As String, bounds As Rect)
+		  g.ForeColor = &cDDDDDD
+		  g.FillRectangle(bounds.Left, bounds.Top, bounds.Width, bounds.Height)
+		  
+		  g.ForeColor = Color.Red
+		  g.DrawString(message, bounds.Left + 10, bounds.Top + 20)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub DrawScatterCell(g As Graphics, x() As Double, y() As Double, bounds As Rect)
+		  Var xMin As Double = getMin(x)
+		  Var xMax As Double = getMax(x)
+		  Var yMin As Double = getMin(y)
+		  Var yMax As Double = getMax(y)
+		  
+		  For i As Integer = 0 To x.LastIndex
+		    Var px As Double = bounds.Left + ((x(i) - xMin) / (xMax - xMin)) * bounds.Width
+		    Var py As Double = bounds.Top + bounds.Height - ((y(i) - yMin) / (yMax - yMin)) * bounds.Height
+		    g.DrawOval(px, py, 2, 2)
+		  Next
+		  g.DrawRect(bounds.Left, bounds.Top, bounds.Width, bounds.Height)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function DrawScatterplot(xVals() As Double, yVals() As Double, xMin As Double, xMax As Double, yMin As Double, yMax As Double, cellSize As Integer = 100) As Picture
+		  // Public Function DrawScatterplot(xVals() As Double, yVals() As Double, xMin As Double, xMax As Double, yMin As Double, yMax As Double, cellSize As Integer = 100) As Picture
+		  
+		  Var padding As Integer = 8
+		  Var plotSize As Integer = cellSize - 2 * padding
+		  Var pic As New Picture(cellSize, cellSize)
+		  Var g As Graphics = pic.Graphics
+		  
+		  
+		  If xVals.Count = 0 Or yVals.Count = 0 Then
+		    System.DebugLog("⚠️ Data missing for one or both axes.")
+		  End If
+		  
+		  // Draw each point scaled into cell
+		  g.DrawingColor = Color.Purple
+		  For i As Integer = 0 To Min(xVals.LastIndex, yVals.LastIndex)
+		    If xMax > xMin And yMax > yMin Then
+		      Var normX As Double = (xVals(i) - xMin) / (xMax - xMin)
+		      Var normY As Double = (yVals(i) - yMin) / (yMax - yMin)
+		      Var px As Integer = Round(padding + normX * plotSize)
+		      Var py As Integer = Round(padding + (1.0 - normY) * plotSize) // Y-axis is flipped
+		      
+		      g.FillOval(px - 2, py - 2, 4, 4)
+		    End If
+		  Next
+		  
+		  Return pic
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetMax(arr() As Double) As Double
+		  // Function GetMax(arr() As Double) As Double
+		  If arr.Count = 0 Then Return 0
+		  Var maxVal As Double = arr(0)
+		  For Each v As Double In arr
+		    If v > maxVal Then maxVal = v
+		  Next
+		  Return maxVal
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetMin(arr() As Double) As Double
+		  // Function GetMin(arr() As Double) As Double
+		  If arr.Count = 0 Then Return 0
+		  Var minVal As Double = arr(0)
+		  For Each v As Double In arr
+		    If v < minVal Then minVal = v
+		  Next
+		  Return minVal
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetNumericColumn(dataDict As Dictionary, key As String) As Double()
+		  Var result() As Double
+		  If dataDict.HasKey(key) Then
+		    Var rawValues() As String = dataDict.Value(key)
+		    For Each item As String In rawValues
+		      Try
+		        result.Add(CDbl(item.Trim))
+		      Catch
+		        ' Skip non-numeric values
+		      End Try
+		    Next
+		  End If
+		  Return result
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function IsStrictNumeric(s As String) As Boolean
 		  Try
 		    Var d As Double = s.ToDouble
@@ -506,6 +742,15 @@ End
 		Sub Pressed()
 		  
 		  ImageViewer1.Image = CreateSpiderPlot(headers, headerData, 100)
+		  
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events SPMatrixButton
+	#tag Event
+		Sub Pressed()
+		  
+		  ImageViewer1.Image = CreateScatterplotMatrix(headers, headerData,100)
 		  
 		End Sub
 	#tag EndEvent
