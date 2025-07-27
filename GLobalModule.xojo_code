@@ -12,7 +12,7 @@ Protected Module GLobalModule
 
 	#tag Method, Flags = &h21
 		Private Function FormatToTwoDecimals(value As Double) As String
-		    Return Format(value, "##0.00")
+		  Return Format(value, "##0.00")
 		End Function
 	#tag EndMethod
 
@@ -70,6 +70,29 @@ Protected Module GLobalModule
 		  
 		  
 		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function PearsonCorrelation(x() As Double, y() As Double) As Double
+		  If x.Count <> y.Count Or x.Count = 0 Then Return 0
+		  
+		  Var n As Integer = x.Count
+		  Var sumX, sumY, sumXY, sumX2, sumY2 As Double
+		  
+		  For i As Integer = 0 To n - 1
+		    sumX = sumX + x(i)
+		    sumY = sumY + y(i)
+		    sumXY = sumXY + x(i) * y(i)
+		    sumX2 = sumX2 + x(i)^2
+		    sumY2 = sumY2 + y(i)^2
+		  Next
+		  
+		  Var numerator As Double = n * sumXY - sumX * sumY
+		  Var denominator As Double = Sqrt((n * sumX2 - sumX^2) * (n * sumY2 - sumY^2))
+		  If denominator = 0 Then Return 0
+		  
+		  Return numerator / denominator
 		End Function
 	#tag EndMethod
 

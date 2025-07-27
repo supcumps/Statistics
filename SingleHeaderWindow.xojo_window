@@ -436,11 +436,11 @@ End
 		  
 		  // Summary text
 		  g.DrawingColor = Color.Black
-		  g.DrawString(header1, leftMargin, topMargin - 45)
+		  g.DrawText(header1, leftMargin, topMargin - 45)
 		  
-		  g.DrawString("Mean = " + Str(mean, "0.00"), leftMargin, topMargin - 25)
-		  g.DrawString("SD = " + Str(sd, "0.00") + "   Range: [" + Str(mean - 2 * sd, "0.00") + ", " + Str(mean + 2 * sd, "0.00") + "]", leftMargin, topMargin - 10)
-		  g.DrawString("Min = " + Str(minVal, "0.00") + ", Max = " + Str(maxVal, "0.00") + ", N = " + values.Count.ToString, leftMargin, h - 20)
+		  g.DrawText("Mean = " + Str(mean, "0.00"), leftMargin, topMargin - 25)
+		  g.DrawText("SD = " + Str(sd, "0.00") + "   Range: [" + Str(mean - 2 * sd, "0.00") + ", " + Str(mean + 2 * sd, "0.00") + "]", leftMargin, topMargin - 10)
+		  g.DrawText("Min = " + Str(minVal, "0.00") + ", Max = " + Str(maxVal, "0.00") + ", N = " + values.Count.ToString, leftMargin, h - 20)
 		End Sub
 	#tag EndMethod
 

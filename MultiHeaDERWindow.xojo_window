@@ -252,6 +252,106 @@ Begin DesktopWindow MultiHeaderWindow
       _mName          =   ""
       _mPanelIndex    =   0
    End
+   Begin DesktopBevelButton SPMatrixButton1
+      Active          =   False
+      AllowAutoDeactivate=   True
+      AllowFocus      =   True
+      AllowTabStop    =   True
+      BackgroundColor =   &c00000000
+      BevelStyle      =   0
+      Bold            =   False
+      ButtonStyle     =   0
+      Caption         =   "Scatterplot Matrix"
+      CaptionAlignment=   3
+      CaptionDelta    =   0
+      CaptionPosition =   1
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      HasBackgroundColor=   False
+      Height          =   22
+      Icon            =   0
+      IconAlignment   =   0
+      IconDeltaX      =   0
+      IconDeltaY      =   0
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   7
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      MenuStyle       =   0
+      PanelIndex      =   0
+      Scope           =   0
+      TabIndex        =   12
+      TabPanelIndex   =   0
+      TextColor       =   &c00000000
+      Tooltip         =   ""
+      Top             =   350
+      Transparent     =   False
+      Underline       =   False
+      Value           =   False
+      Visible         =   True
+      Width           =   160
+      _mIndex         =   0
+      _mInitialParent =   ""
+      _mName          =   ""
+      _mPanelIndex    =   0
+   End
+   Begin DesktopBevelButton Heatmap_BevelButton
+      Active          =   False
+      AllowAutoDeactivate=   True
+      AllowFocus      =   True
+      AllowTabStop    =   True
+      BackgroundColor =   &c00000000
+      BevelStyle      =   0
+      Bold            =   False
+      ButtonStyle     =   0
+      Caption         =   "Correlation Heatmap"
+      CaptionAlignment=   3
+      CaptionDelta    =   0
+      CaptionPosition =   1
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      HasBackgroundColor=   False
+      Height          =   22
+      Icon            =   0
+      IconAlignment   =   0
+      IconDeltaX      =   0
+      IconDeltaY      =   0
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   7
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      MenuStyle       =   0
+      PanelIndex      =   0
+      Scope           =   0
+      TabIndex        =   13
+      TabPanelIndex   =   0
+      TextColor       =   &c00000000
+      Tooltip         =   ""
+      Top             =   394
+      Transparent     =   False
+      Underline       =   False
+      Value           =   False
+      Visible         =   True
+      Width           =   160
+      _mIndex         =   0
+      _mInitialParent =   ""
+      _mName          =   ""
+      _mPanelIndex    =   0
+   End
 End
 #tag EndDesktopWindow
 
@@ -262,6 +362,21 @@ End
 		End Sub
 	#tag EndEvent
 
+
+	#tag Method, Flags = &h0
+		Function ColorFromCorrelation(r As Double) As Color
+		  Var scaled As Integer = Abs(r) * 64 // max tone intensity reduced from 255 to 64
+		  
+		  If r < 0 Then
+		    // Soft reds (low saturation pinks to dusty reds)
+		    Return Color.RGB(255, 200 - scaled, 200 - scaled)
+		  Else
+		    // Soft blues (light sky blue to steel blue)
+		    Return Color.RGB(200 - scaled, 200 - scaled, 255)
+		  End If
+		  
+		End Function
+	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function ConvertToDoubles(dataDict As Dictionary, key As String) As Double()
@@ -277,6 +392,81 @@ End
 		    Next
 		  End If
 		  Return result
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function CorrelationInterpretation(r As Double) As String
+		  //Function CorrelationInterpretation(r As Double) As String
+		  Select Case True
+		  Case r >= 0.75 
+		     Return "Strong positive"
+		  Case r >= 0.4  
+		     Return "Moderate positive"
+		  Case r >= 0.1  
+		    Return "Weak positive"
+		  Case r <= -0.75
+		    Return "Strong negative"
+		  Case r <= -0.4 
+		    Return "Moderate negative"
+		  Case r <= -0.1 
+		    Return "Weak negative"
+		  Else           
+		    Return "No correlation"
+		  End Select
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function CreateFullCorrelationHeatmapPicture(headers() As String, dataDict As Dictionary, cellSize As Integer = 80, labelWidth As Integer = 100, labelHeight As Integer = 40) As Picture
+		  Var cols As Integer = headers.Count
+		  Var width As Integer = labelWidth + cols * cellSize + 10
+		  Var height As Integer = labelHeight + cols * cellSize + 40
+		  
+		  Var pic As New Picture(width, height)
+		  Var g As Graphics = pic.Graphics
+		  
+		  g.FontSize = 12
+		  g.Bold = True
+		  
+		  // Column headers
+		  For col As Integer = 0 To cols - 1
+		    Var xLabel As String = headers(col)
+		    g.DrawString(xLabel, labelWidth + col * cellSize + cellSize / 2 - g.TextWidth(xLabel) / 2, 20)
+		  Next
+		  
+		  // Row headers
+		  For row As Integer = 0 To cols - 1
+		    Var yLabel As String = headers(row)
+		    g.DrawString(yLabel, 5, labelHeight + row * cellSize + cellSize / 2 + g.TextHeight / 2)
+		  Next
+		  
+		  // Heatmap cells
+		  For row As Integer = 0 To cols - 1
+		    For col As Integer = 0 To cols - 1
+		      Var xVals() As Double = ConvertToDoubles(dataDict, headers(col))
+		      Var yVals() As Double = ConvertToDoubles(dataDict, headers(row))
+		      Var r As Double = PearsonCorrelation(xVals, yVals)
+		      
+		      Var heatColor As Color = ColorFromCorrelation(r)
+		      Var Left As Integer = labelWidth + col * cellSize
+		      Var top As Integer = labelHeight + row * cellSize
+		      
+		      g.DrawingColor = heatColor
+		      g.FillRectangle(Left, top, cellSize, cellSize)
+		      g.DrawingColor = Color.Black
+		      g.DrawRect(Left, top, cellSize, cellSize)
+		      g.DrawString(Format(r, "-#.##"), Left + 5, top + 20)
+		      
+		      Var interp As String = CorrelationInterpretation(r)
+		      g.FontSize = 10
+		      g.DrawString(interp, Left + 5, top + cellSize - 8)
+		      g.FontSize = 12
+		    Next
+		  Next
+		  
+		  Return pic
 		End Function
 	#tag EndMethod
 
@@ -387,14 +577,14 @@ End
 		        Var xLabelX As Integer = bounds.Left + bounds.Width / 2 - g.TextWidth(xLabel) / 2
 		        Var xLabelY As Integer = bounds.Bottom + 15
 		        g.Bold = True
-		        g.DrawString(xLabel, xLabelX, xLabelY)
+		        g.DrawText(xLabel, xLabelX, xLabelY)
 		      End If
 		      
 		      If col = 0 Then
 		        Var yLabelX As Integer = bounds.Left - g.TextWidth(yLabel) - 12
 		        Var yLabelY As Integer = bounds.Top + bounds.Height / 2 + g.TextHeight / 2
 		        g.Bold = True
-		        g.DrawString(yLabel, yLabelX, yLabelY)
+		        g.DrawText(yLabel, yLabelX, yLabelY)
 		      End If
 		    Next
 		  Next
@@ -538,7 +728,7 @@ End
 		  g.FillRectangle(bounds.Left, bounds.Top, bounds.Width, bounds.Height)
 		  
 		  g.ForeColor = Color.Red
-		  g.DrawString(message, bounds.Left + 10, bounds.Top + 20)
+		  g.DrawText(message, bounds.Left + 10, bounds.Top + 20)
 		End Sub
 	#tag EndMethod
 
@@ -751,6 +941,23 @@ End
 		Sub Pressed()
 		  
 		  ImageViewer1.Image = CreateScatterplotMatrix(headers, headerData,100)
+		  
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events SPMatrixButton1
+	#tag Event
+		Sub Pressed()
+		  
+		  ImageViewer1.Image = CreateScatterplotMatrix(headers, headerData,100)
+		  
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events Heatmap_BevelButton
+	#tag Event
+		Sub Pressed()
+		  ImageViewer1.Image = CreateFullCorrelationHeatmapPicture(headers, headerData)
 		  
 		End Sub
 	#tag EndEvent

@@ -1,7 +1,7 @@
 #tag DesktopWindow
 Begin DesktopWindow DualHeaderWindow
    Backdrop        =   0
-   BackgroundColor =   &cFFFFFF
+   BackgroundColor =   &c0433FF00
    Composite       =   False
    DefaultLocation =   2
    FullScreen      =   False
@@ -302,6 +302,56 @@ Begin DesktopWindow DualHeaderWindow
       _mName          =   ""
       _mPanelIndex    =   0
    End
+   Begin DesktopBevelButton Heatmap_BevelButton
+      Active          =   False
+      AllowAutoDeactivate=   True
+      AllowFocus      =   True
+      AllowTabStop    =   True
+      BackgroundColor =   &c00000000
+      BevelStyle      =   0
+      Bold            =   False
+      ButtonStyle     =   0
+      Caption         =   "Correlation Heatmap"
+      CaptionAlignment=   3
+      CaptionDelta    =   0
+      CaptionPosition =   1
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      HasBackgroundColor=   False
+      Height          =   22
+      Icon            =   0
+      IconAlignment   =   0
+      IconDeltaX      =   0
+      IconDeltaY      =   0
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   47
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      MenuStyle       =   0
+      PanelIndex      =   0
+      Scope           =   0
+      TabIndex        =   12
+      TabPanelIndex   =   0
+      TextColor       =   &c00000000
+      Tooltip         =   ""
+      Top             =   440
+      Transparent     =   False
+      Underline       =   False
+      Value           =   False
+      Visible         =   True
+      Width           =   138
+      _mIndex         =   0
+      _mInitialParent =   ""
+      _mName          =   ""
+      _mPanelIndex    =   0
+   End
 End
 #tag EndDesktopWindow
 
@@ -320,6 +370,18 @@ End
 		    total = total + v
 		  Next
 		  Return total / residuals.Count
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ColorFromCorrelation(r As Double) As Color
+		  // Shades of red for negative, blue for positive
+		  Var shade As Integer = Abs(r) * 255
+		  If r < 0 Then
+		    Return Color.RGB(255, 255 - shade, 255 - shade) // light red → dark red
+		  Else
+		    Return Color.RGB(255 - shade, 255 - shade, 255) // light blue → dark blue
+		  End If
 		End Function
 	#tag EndMethod
 
@@ -353,6 +415,72 @@ End
 		  Next
 		  intercept = Median(intercepts)
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function CreateCorrelationHeatmapPicture(dataX() As Double, dataY() As Double, headerX As String, headerY As String, cellSize As Integer = 80) As Picture
+		  // Function CreateCorrelationHeatmapPicture(dataX() As Double, dataY() As Double, headerX As String, headerY As String, cellSize As Integer = 80) As Picture
+		  
+		  Var labelWidth As Integer = 120
+		  Var labelHeight As Integer = 40
+		  Var picWidth As Integer = cellSize + labelWidth + 50
+		  Var picHeight As Integer = cellSize + labelHeight + 30
+		  
+		  Var pic As New Picture(picWidth, picHeight)
+		  Var g As Graphics = pic.Graphics
+		  
+		  // Draw headers
+		  g.FontSize = 12
+		  g.Bold = True
+		  g.DrawText(headerX, labelWidth + cellSize / 2 - g.TextWidth(headerX) / 2, 20)
+		  g.DrawText(headerY, 5, labelHeight + cellSize / 2 + g.TextHeight / 2)
+		  
+		  // Compute correlation
+		  Var r As Double = PearsonCorrelation(dataX, dataY)
+		  Var heatColor As Color = ColorFromCorrelation(r)
+		  
+		  // Draw heatmap cell
+		  Var Left As Integer = labelWidth
+		  Var top As Integer = labelHeight
+		  
+		  g.DrawingColor = heatColor
+		  g.FillRectangle(Left, top, cellSize, cellSize)
+		  g.DrawingColor = Color.Black
+		  g.DrawRect(Left, top, cellSize, cellSize)
+		  g.DrawText(Format(r, "-#.##"), Left +10, top + cellSize / 2 + 5)
+		  
+		  Var interpretation As String
+		  
+		  Var r2dp As String = Format(r, "-#.##") 
+		  
+		  Select Case True
+		  Case r > 0.75
+		    interpretation = "Strong positive correlation, r = " + r2dp
+		  Case r > 0.4
+		    interpretation = "Moderate positive correlation, r = " + r2dp 
+		  Case r > 0.1
+		    interpretation = "Weak positive correlation,r = " + r2dp 
+		  Case r < -0.75
+		    interpretation = "Strong negative correlation,r = "+ r2dp 
+		  Case r < -0.4
+		    interpretation = "Moderate negative correlation, r = " +  r2dp 
+		  Case r < -0.1
+		    interpretation = "Weak negative correlation, r = " +  r2dp 
+		  Else
+		    interpretation = "No meaningful correlation, r = " +  r2dp 
+		  End Select
+		  
+		  'g.FontSize = 10
+		  'g.Bold = False
+		  'g.DrawText (interpretation, Left , top + cellSize + 20, 0.0)
+		  'str As String, x As Double, y As Double, width As Double = 0.0, condense As Boolean = False
+		  g.DrawingColor = color.Purple
+		  g.FontName = "Helvetica"
+		  g.FontUnit = FontUnits.Point
+		  g.FontSize = 14
+		  g.DrawText(interpretation, 0, top + cellSize + 20, 500)
+		  Return pic
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -415,12 +543,12 @@ End
 		  // Annotation
 		  Var label As String = "y = " + Str(intercept, "0.00") + " + " + Str(slope, "0.00") + "x"
 		  g.DrawingColor = Color.Blue
-		  g.DrawString(label, leftMargin, topMargin - 10)
+		  g.DrawText(label, leftMargin, topMargin - 10)
 		  
 		  g.DrawingColor = Color.Black
-		  g.DrawString("Passing–Bablok Regression", leftMargin, 30)
-		  g.DrawString(methBlab + " vs " + methAlab, leftMargin, h - 20)
-		  g.DrawString("Identity line: y = x", w - rightMargin - 160, topMargin + 10)
+		  g.DrawText("Passing–Bablok Regression", leftMargin, 30)
+		  g.DrawText(methBlab + " vs " + methAlab, leftMargin, h - 20)
+		  g.DrawText("Identity line: y = x", w - rightMargin - 160, topMargin + 10)
 		End Sub
 	#tag EndMethod
 
@@ -515,13 +643,13 @@ End
 		  
 		  // Stats and title
 		  Var label As String = "y = " + Str(intercept, "0.00") + " + " + Str(slope, "0.00") + "x, R² = " + Str(rSquared, "0.000")
-		  g.DrawString(label, leftMargin, topMargin - 10)
+		  g.DrawText(label, leftMargin, topMargin - 10)
 		  
-		  g.DrawString("Robust Bland-Altman Plot", leftMargin, 30)
-		  g.DrawString("Bias = " + Str(median_diff, "0.00") + ", MAD = " + Str(mad, "0.00"), leftMargin, 50)
-		  g.DrawString("Limits: " + Str(lower_l, "0.00") + " to " + Str(upper_l, "0.00") + " (±" + Str(z) + " × MAD / 0.6745)", leftMargin, 70)
-		  g.DrawString("Median of " + methAlab + " and " + methBlab, leftMargin, h - 20)
-		  g.DrawString(methAlab + " - " + methBlab, 10, topMargin + plotHeight / 2)
+		  g.DrawText("Robust Bland-Altman Plot", leftMargin, 30)
+		  g.DrawText("Bias = " + Str(median_diff, "0.00") + ", MAD = " + Str(mad, "0.00"), leftMargin, 50)
+		  g.DrawText("Limits: " + Str(lower_l, "0.00") + " to " + Str(upper_l, "0.00") + " (±" + Str(z) + " × MAD / 0.6745)", leftMargin, 70)
+		  g.DrawText("Median of " + methAlab + " and " + methBlab, leftMargin, h - 20)
+		  g.DrawText(methAlab + " - " + methBlab, 10, topMargin + plotHeight / 2)
 		  
 		  
 		End Sub
@@ -633,13 +761,13 @@ End
 		  
 		  // 🏷️ Step 5: Labels
 		  g.DrawingColor = Color.Black
-		  g.DrawString("Joint Density: " + methAlab + " vs " + methBlab, leftMargin, 30)
-		  g.DrawString(methAlab + " Distribution ↑", leftMargin + plotWidth / 2 - 50, topMargin - 60)
-		  'g.DrawString(methBlab + " Distribution →", w - rightMargin + 20, topMargin + plotHeight / 2)
-		  g.DrawString(methBlab + " Distribution →", w - rightMargin - 50, topMargin - 20)
+		  g.DrawText("Joint Density: " + methAlab + " vs " + methBlab, leftMargin, 30)
+		  g.DrawText(methAlab + " Distribution ↑", leftMargin + plotWidth / 2 - 50, topMargin - 60)
+		  'g.DrawText(methBlab + " Distribution →", w - rightMargin + 20, topMargin + plotHeight / 2)
+		  g.DrawText(methBlab + " Distribution →", w - rightMargin - 50, topMargin - 20)
 		  
-		  g.DrawString(methAlab, leftMargin + plotWidth / 2 - 30, h - 20)
-		  g.DrawString(methBlab, 10, topMargin + plotHeight / 2)
+		  g.DrawText(methAlab, leftMargin + plotWidth / 2 - 30, h - 20)
+		  g.DrawText(methBlab, 10, topMargin + plotHeight / 2)
 		  
 		  Var meanX As Double = Average(x)
 		  Var meanY As Double = Average(y)
@@ -650,8 +778,8 @@ End
 		  
 		  // Display in lower-left corner
 		  g.DrawingColor = Color.Black
-		  g.DrawString("Summary – " + methAlab + ": Mean = " + Str(meanX, "0.00") + ", Median = " + Str(medianX, "0.00") + ", SD = " + Str(sdX, "0.00"), leftMargin, h - bottomMargin + 30)
-		  g.DrawString("Summary – " + methBlab + ": Mean = " + Str(meanY, "0.00") + ", Median = " + Str(medianY, "0.00") + ", SD = " + Str(sdY, "0.00"), leftMargin, h - bottomMargin + 50)
+		  g.DrawText("Summary – " + methAlab + ": Mean = " + Str(meanX, "0.00") + ", Median = " + Str(medianX, "0.00") + ", SD = " + Str(sdX, "0.00"), leftMargin, h - bottomMargin + 30)
+		  g.DrawText("Summary – " + methBlab + ": Mean = " + Str(meanY, "0.00") + ", Median = " + Str(medianY, "0.00") + ", SD = " + Str(sdY, "0.00"), leftMargin, h - bottomMargin + 50)
 		  
 		  Return img
 		End Function
@@ -752,10 +880,10 @@ End
 		  
 		  // Labels
 		  g.DrawingColor = Color.Blue
-		  g.DrawString("Passing–Bablok Regression", leftMargin, 30)
-		  g.DrawString("Equation: y = " + Str(intercept, "0.00") + " + " + Str(slope, "0.00") + "x", leftMargin, 50)
-		  g.DrawString("95% CI slope: [" + Str(lowerSlope, "0.00") + ", " + Str(upperSlope, "0.00") + "]", leftMargin, 70)
-		  g.DrawString("95% CI intercept: [" + Str(lowerIntercept, "0.00") + ", " + Str(upperIntercept, "0.00") + "]", leftMargin, 90)
+		  g.DrawText("Passing–Bablok Regression", leftMargin, 30)
+		  g.DrawText("Equation: y = " + Str(intercept, "0.00") + " + " + Str(slope, "0.00") + "x", leftMargin, 50)
+		  g.DrawText("95% CI slope: [" + Str(lowerSlope, "0.00") + ", " + Str(upperSlope, "0.00") + "]", leftMargin, 70)
+		  g.DrawText("95% CI intercept: [" + Str(lowerIntercept, "0.00") + ", " + Str(upperIntercept, "0.00") + "]", leftMargin, 90)
 		  
 		  // Interpretation
 		  Var interpretation As String = ""
@@ -769,7 +897,7 @@ End
 		    interpretation = "Interpretation: Partial agreement with mild bias"
 		  End If
 		  g.DrawingColor = Color.Black
-		  g.DrawString(interpretation, leftMargin, 110)
+		  g.DrawText(interpretation, leftMargin, 110)
 		  
 		  Return plotPic
 		End Function
@@ -1077,6 +1205,14 @@ End
 		  ImageViewer1.Image = densityPlot
 		  
 		  
+		  
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events Heatmap_BevelButton
+	#tag Event
+		Sub Pressed()
+		  ImageViewer1.Image = CreateCorrelationHeatmapPicture(data1Doubles, data2Doubles, header1, header2)
 		  
 		End Sub
 	#tag EndEvent
