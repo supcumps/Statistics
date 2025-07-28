@@ -252,56 +252,6 @@ Begin DesktopWindow MultiHeaderWindow
       _mName          =   ""
       _mPanelIndex    =   0
    End
-   Begin DesktopBevelButton SPMatrixButton1
-      Active          =   False
-      AllowAutoDeactivate=   True
-      AllowFocus      =   True
-      AllowTabStop    =   True
-      BackgroundColor =   &c00000000
-      BevelStyle      =   0
-      Bold            =   False
-      ButtonStyle     =   0
-      Caption         =   "Scatterplot Matrix"
-      CaptionAlignment=   3
-      CaptionDelta    =   0
-      CaptionPosition =   1
-      Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
-      HasBackgroundColor=   False
-      Height          =   22
-      Icon            =   0
-      IconAlignment   =   0
-      IconDeltaX      =   0
-      IconDeltaY      =   0
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   7
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      MenuStyle       =   0
-      PanelIndex      =   0
-      Scope           =   0
-      TabIndex        =   12
-      TabPanelIndex   =   0
-      TextColor       =   &c00000000
-      Tooltip         =   ""
-      Top             =   350
-      Transparent     =   False
-      Underline       =   False
-      Value           =   False
-      Visible         =   True
-      Width           =   160
-      _mIndex         =   0
-      _mInitialParent =   ""
-      _mName          =   ""
-      _mPanelIndex    =   0
-   End
    Begin DesktopBevelButton Heatmap_BevelButton
       Active          =   False
       AllowAutoDeactivate=   True
@@ -351,6 +301,50 @@ Begin DesktopWindow MultiHeaderWindow
       _mInitialParent =   ""
       _mName          =   ""
       _mPanelIndex    =   0
+   End
+   Begin DesktopBevelButton VP_BevelButton
+      AllowAutoDeactivate=   True
+      AllowFocus      =   True
+      AllowTabStop    =   True
+      BackgroundColor =   &c00000000
+      BevelStyle      =   0
+      Bold            =   False
+      ButtonStyle     =   0
+      Caption         =   "Violin Plots"
+      CaptionAlignment=   3
+      CaptionDelta    =   0
+      CaptionPosition =   1
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      HasBackgroundColor=   False
+      Height          =   22
+      Icon            =   0
+      IconAlignment   =   0
+      IconDeltaX      =   0
+      IconDeltaY      =   0
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   7
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      MenuStyle       =   0
+      Scope           =   0
+      TabIndex        =   14
+      TabPanelIndex   =   0
+      TextColor       =   &c00000000
+      Tooltip         =   ""
+      Top             =   443
+      Transparent     =   False
+      Underline       =   False
+      Value           =   False
+      Visible         =   True
+      Width           =   160
    End
 End
 #tag EndDesktopWindow
@@ -780,6 +774,133 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub DrawViolin(g As Graphics, centerX As Double, height As Double, width As Double, density() As Pair, rawData() As Double, dataMin As Double, dataMax As Double)
+		  //Sub DrawViolin(g As Graphics, centerX As Double, height As Double, width As Double, density() As Pair, rawData() As Double, dataMin As Double, dataMax As Double)
+		  
+		  
+		  Var maxDensity As Double = 0
+		  For Each p As Pair In density
+		    If p.Right > maxDensity Then maxDensity = p.Right
+		  Next
+		  
+		  For Each p As Pair In density
+		    Var y As Double = p.Left
+		    Var d As Double = p.Right
+		    Var scaledY As Double = ScaleY(y, height, dataMin, dataMax)
+		    Var halfWidth As Double = (d / maxDensity) * (width / 2)
+		    Var tone As Integer = 255 - (d / maxDensity) * 180
+		    g.DrawingColor = Color.RGB(tone, tone, tone)
+		    g.DrawLine(centerX - halfWidth, scaledY, centerX + halfWidth, scaledY)
+		  Next
+		  
+		  Var q1 As Double = Percentile(rawData, 0.25)
+		  Var q2 As Double = Percentile(rawData, 0.5)
+		  Var q3 As Double = Percentile(rawData, 0.75)
+		  Var y1 As Double = ScaleY(q1, height, dataMin, dataMax)
+		  Var y2 As Double = ScaleY(q2, height, dataMin, dataMax)
+		  Var y3 As Double = ScaleY(q3, height, dataMin, dataMax)
+		  
+		  g.DrawingColor = Color.RGBA(180,180,180,80)
+		  g.FillRectangle(centerX - width / 2, y3, width, y1 - y3)
+		  
+		  g.DrawingColor = Color.Black
+		  g.DrawLine(centerX - width / 2, y1, centerX + width / 2, y1)
+		  g.DrawLine(centerX - width / 2, y2, centerX + width / 2, y2)
+		  g.DrawLine(centerX - width / 2, y3, centerX + width / 2, y3)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub DrawViolinShape(g As Graphics, centerX As Double, plotH As Integer, violinWidth As Double, data() As Double, density() As Pair)
+		  // Public Shared Sub DrawViolinShape(g As Graphics, centerX As Double, plotH As Integer, violinWidth As Double, data() As Double, density() As Pair)
+		  If data.Count = 0 Or density.Count = 0 Then Return
+		  
+		  // Find min and max values for scaling
+		  Var minVal As Double = data(0)
+		  Var maxVal As Double = data(0)
+		  For Each value As Double In data
+		    If value < minVal Then minVal = value
+		    If value > maxVal Then maxVal = value
+		  Next
+		  
+		  // Find max density for width scaling
+		  Var maxDensity As Double = 0
+		  For Each densityPoint As Pair In density
+		    If densityPoint.Right.DoubleValue > maxDensity Then
+		      maxDensity = densityPoint.Right.DoubleValue
+		    End If
+		  Next
+		  
+		  If maxDensity = 0 Then Return
+		  
+		  // Calculate height and margins
+		  Var margin As Double = 40
+		  Var availableHeight As Double = plotH - 2 * margin
+		  Var valueRange As Double = maxVal - minVal
+		  
+		  If valueRange = 0 Then Return
+		  
+		  // Draw the violin shape
+		  g.DrawingColor = Color.Blue
+		  g.PenSize = 1
+		  
+		  // Create points for the violin outline
+		  Var leftPoints() As Pair
+		  Var rightPoints() As Pair
+		  
+		  For Each densityPoint As Pair In density
+		    Var yValue As Double = densityPoint.Left.DoubleValue
+		    Var densityValue As Double = densityPoint.Right.DoubleValue
+		    
+		    // Scale Y position
+		    Var yPos As Double = plotH - margin - ((yValue - minVal) / valueRange) * availableHeight
+		    
+		    // Scale width based on density
+		    Var halfWidth As Double = (densityValue / maxDensity) * (violinWidth / 2)
+		    
+		    // Create left and right points
+		    leftPoints.Add(New Pair(centerX - halfWidth, yPos))
+		    rightPoints.Add(New Pair(centerX + halfWidth, yPos))
+		  Next
+		  
+		  // Draw left side of violin
+		  For i As Integer = 0 To leftPoints.LastIndex - 1
+		    Var p1 As Pair = leftPoints(i)
+		    Var p2 As Pair = leftPoints(i + 1)
+		    g.DrawLine(p1.Left.DoubleValue, p1.Right.DoubleValue, p2.Left.DoubleValue, p2.Right.DoubleValue)
+		  Next
+		  
+		  // Draw right side of violin
+		  For i As Integer = 0 To rightPoints.LastIndex - 1
+		    Var p1 As Pair = rightPoints(i)
+		    Var p2 As Pair = rightPoints(i + 1)
+		    g.DrawLine(p1.Left.DoubleValue, p1.Right.DoubleValue, p2.Left.DoubleValue, p2.Right.DoubleValue)
+		  Next
+		  
+		  // Connect top and bottom
+		  If leftPoints.Count > 0 And rightPoints.Count > 0 Then
+		    // Top connection
+		    g.DrawLine(leftPoints(0).Left.DoubleValue, leftPoints(0).Right.DoubleValue, rightPoints(0).Left.DoubleValue, rightPoints(0).Right.DoubleValue)
+		    // Bottom connection
+		    Var lastIndex As Integer = leftPoints.LastIndex
+		    g.DrawLine(leftPoints(lastIndex).Left.DoubleValue, leftPoints(lastIndex).Right.DoubleValue, rightPoints(lastIndex).Left.DoubleValue, rightPoints(lastIndex).Right.DoubleValue)
+		  End If
+		  
+		  // Draw center line (median indicator)
+		  g.DrawingColor = Color.Black
+		  g.DrawLine(centerX, margin, centerX, plotH - margin)
+		  
+		  // Draw data points as small dots (optional)
+		  g.DrawingColor = Color.Red
+		  For Each value As Double In data
+		    Var yPos As Double = plotH - margin - ((value - minVal) / valueRange) * availableHeight
+		    g.FillOval(centerX - 2, yPos - 2, 4, 4)
+		  Next
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function GetMax(arr() As Double) As Double
 		  // Function GetMax(arr() As Double) As Double
 		  If arr.Count = 0 Then Return 0
@@ -830,6 +951,67 @@ End
 		  Catch
 		    Return False
 		  End Try
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function RenderViolinPlot(headers() As String, headerData As Dictionary, canvasWidth As Integer, canvasHeight As Integer) As Picture
+		  System.DebugLog("Header count: " + headers.Count.ToString)
+		  
+		  Var violinPic As New Picture(canvasWidth, canvasHeight)
+		  Var g As Graphics = violinPic.Graphics
+		  
+		  // Background
+		  g.DrawingColor = Color.LightGray
+		  g.FillRectangle(0, 0, canvasWidth, canvasHeight)
+		  
+		  '// Debug marker
+		  'g.DrawingColor = Color.Red
+		  'g.FillRectangle(10, 10, 30, 30)
+		  'g.DrawString("Violin Ready", 20, 60)
+		  
+		  // Layout
+		  Var margin As Double = 40
+		  Var plotW As Integer = canvasWidth
+		  Var plotH As Integer = canvasHeight
+		  Var violinWidth As Double = 30
+		  Var spacing As Double = (plotW - 2 * margin) / headers.Count
+		  
+		  For i As Integer = 0 To headers.LastIndex
+		    Var header As String = headers(i)
+		    Var rawDataVariant As Variant = headerData.Lookup(header, Nil)
+		    If rawDataVariant = Nil Then Continue
+		    
+		    System.DebugLog("rawDataVariant.Type: " + rawDataVariant.Type.ToString)
+		    
+		    Var data() As double = ViolinStatsUtils.ExtractDoublesFromVariant(rawDataVariant)
+		    
+		    If data.Count = 0 Then Continue
+		    
+		    Var density() As Pair = ViolinStatsUtils.EstimateDensity(data)
+		    
+		    Var centerX As Double = margin + i * spacing
+		    
+		    // Draw shape
+		    DrawViolinShape(g, centerX, plotH, violinWidth, data, density)
+		    
+		    '// Optional visual tag
+		    'g.DrawingColor = Color.Blue
+		    'g.FillRectangle(plotW - 60, plotH - 60, 50, 50)
+		    
+		    // Label
+		    g.DrawingColor = Color.Black
+		    g.DrawString(header, centerX - violinWidth / 2, plotH - 10)
+		  Next
+		  
+		  // Final debug string
+		  g.DrawingColor = Color.Red
+		  g.DrawString("Violin test", 10, 20)
+		  
+		  System.DebugLog("Canvas W: " + canvasWidth.ToString)
+		  System.DebugLog("Canvas H: " + canvasHeight.ToString)
+		  
+		  Return violinPic
 		End Function
 	#tag EndMethod
 
@@ -909,6 +1091,10 @@ End
 		Headers() As String
 	#tag EndProperty
 
+	#tag Property, Flags = &h0
+		ViolinPlotImage As Picture
+	#tag EndProperty
+
 
 	#tag Structure, Name = PointF, Flags = &h0
 		x as Double
@@ -945,20 +1131,21 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events SPMatrixButton1
-	#tag Event
-		Sub Pressed()
-		  
-		  ImageViewer1.Image = CreateScatterplotMatrix(headers, headerData,100)
-		  
-		End Sub
-	#tag EndEvent
-#tag EndEvents
 #tag Events Heatmap_BevelButton
 	#tag Event
 		Sub Pressed()
 		  ImageViewer1.Image = CreateFullCorrelationHeatmapPicture(headers, headerData)
 		  
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events VP_BevelButton
+	#tag Event
+		Sub Pressed()
+		  
+		  
+		  System.DebugLog("Assigning image to viewer")
+		  ImageViewer1.Image =RenderViolinPlot(headers, headerData, ImageViewer1.Width, ImageViewer1.Height)
 		End Sub
 	#tag EndEvent
 #tag EndEvents

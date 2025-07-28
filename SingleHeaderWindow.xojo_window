@@ -387,8 +387,8 @@ End
 		  // Stats
 		  Var mean As Double = Average(values)
 		  Var sd As Double = StandardDeviation(values)
-		  Var minVal As Double = MinValue(values)
-		  Var maxVal As Double = MaxValue(values)
+		  Var minVal As Double = ViolinStatsUtils.MinValue(values)
+		  Var maxVal As Double = ViolinStatsUtils.MaxValue(values)
 		  
 		  // Density curve using Gaussian bump method
 		  Var resolution As Integer = 200
@@ -407,7 +407,7 @@ End
 		  Next
 		  
 		  // Normalize Y to fit canvas
-		  Var maxY As Double = MaxValue(curveY)
+		  Var maxY As Double =ViolinStatsUtils.MaxValue(curveY)
 		  For i As Integer = 0 To resolution
 		    curveY(i) = curveY(i) / maxY * plotHeight
 		  Next
@@ -476,8 +476,8 @@ End
 		  // Compute stats
 		  mean  = Average(values)
 		  sd  = StandardDeviation(values)
-		  Var minVal As Double = MinValue(values)
-		  Var maxVal As Double = MaxValue(values)
+		  Var minVal As Double = ViolinStatsUtils.MinValue(values)
+		  Var maxVal As Double = ViolinStatsUtils.MaxValue(values)
 		  
 		  // Bin setup
 		  Var binCount As Integer = 20
